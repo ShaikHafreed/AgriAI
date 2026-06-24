@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "659356355972",
+    "project_id": "create-a-project-9a9d1",
+    "storage_bucket": "create-a-project-9a9d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659356355972:android:3c97f81866b5b2b8d461d1",
+        "android_client_info": {
+          "package_name": "com.agriai.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659356355972-pp40m043r12v2c0pcvij41po72s08s2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAQS1fIN6xLgz_ib2J7cpHyv2F33esT5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "659356355972-pp40m043r12v2c0pcvij41po72s08s2u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

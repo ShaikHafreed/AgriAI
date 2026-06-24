@@ -1,13 +1,20 @@
-{
+﻿{
   "expo": {
     "name": "AgriAI",
-    "slug": "AgriAI",
+    "slug": "agriai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "agriai",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.agriai.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "AgriAI uses your location to provide local weather and crop recommendations.",
+        "NSCameraUsageDescription": "AgriAI uses your camera to capture crop photos for disease detection.",
+        "NSPhotoLibraryUsageDescription": "AgriAI needs gallery access to pick crop photos for disease detection."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -15,10 +22,34 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.agriai.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "AgriAI uses your location for weather and crop recommendations."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "AgriAI needs gallery access to pick crop photos for disease detection.",
+          "cameraPermission": "AgriAI needs camera access to capture crop photos for disease detection."
+        }
+      ]
+    ]
   }
 }
