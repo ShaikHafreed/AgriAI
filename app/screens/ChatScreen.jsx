@@ -19,7 +19,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Your Claude API Key
-const CLAUDE_KEY = '';
+const CLAUDE_API_KEY = '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';
 
 // System prompt - makes Claude act as an expert organic farming assistant
 const SYSTEM_PROMPT = `You are AgriAI, an expert organic farming assistant for Indian farmers. IMPORTANT: Always respond in English by default. Only switch to Hindi, Telugu, Tamil, Kannada, Malayalam or Marathi if the user writes to you in that specific language first. Never mix languages in a single response.
