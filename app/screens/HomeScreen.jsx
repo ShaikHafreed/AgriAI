@@ -1,5 +1,5 @@
-// app/screens/HomeScreen.jsx — Day 6 FINAL v2
-// Fixed: Language switcher moved below header, fully visible
+// app/screens/HomeScreen.jsx — Day 7 update
+// Crop Recommendations now LIVE (no more "soon")
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -54,14 +54,14 @@ export default function HomeScreen() {
       const data = await res.json();
       if (data.cod === 200) {
         setWeather({
-          temp: Math.round(data.main.temp),
-          feelsLike: Math.round(data.main.feels_like),
-          humidity: data.main.humidity,
-          windSpeed: Math.round(data.wind.speed * 3.6),
+          temp:        Math.round(data.main.temp),
+          feelsLike:   Math.round(data.main.feels_like),
+          humidity:    data.main.humidity,
+          windSpeed:   Math.round(data.wind.speed * 3.6),
           description: data.weather[0].description,
-          main: data.weather[0].main,
-          city: data.name,
-          rainChance: data.clouds?.all || 0,
+          main:        data.weather[0].main,
+          city:        data.name,
+          rainChance:  data.clouds?.all || 0,
         });
       }
     } catch (e) { console.log(e); }
@@ -101,11 +101,32 @@ export default function HomeScreen() {
     return '✅ ' + (lang === 'TE' ? 'మంచి వాతావరణం - వ్యవసాయానికి అనుకూలం' : lang === 'HI' ? 'अच्छा मौसम - खेती के लिए उपयुक्त' : 'Good conditions — suitable for farming.');
   };
 
+  // ── Day 7: Crop Recommendations now LIVE ─────────────────────────────────
   const quickActions = [
-    { emoji: '🌱', title: tr('cropRecs', lang),         color: '#E8F5E9', onPress: () => Alert.alert('Coming Soon', 'Day 7!'), soon: true },
-    { emoji: '🤖', title: tr('askAgriAI', lang),        color: '#E3F2FD', onPress: () => router.push('/screens/ChatScreen') },
-    { emoji: '🔬', title: tr('diseaseDetection', lang), color: '#FFF3E0', onPress: () => router.push('/screens/CropDiseaseScreen') },
-    { emoji: '📈', title: tr('marketPrices', lang),     color: '#F3E5F5', onPress: () => router.push('/screens/MarketPricesScreen') },
+    {
+      emoji: '🌱',
+      title: tr('cropRecs', lang),
+      color: '#E8F5E9',
+      onPress: () => router.push('/screens/CropRecommendationScreen'), // ← LIVE now
+    },
+    {
+      emoji: '🤖',
+      title: tr('askAgriAI', lang),
+      color: '#E3F2FD',
+      onPress: () => router.push('/screens/ChatScreen'),
+    },
+    {
+      emoji: '🔬',
+      title: tr('diseaseDetection', lang),
+      color: '#FFF3E0',
+      onPress: () => router.push('/screens/CropDiseaseScreen'),
+    },
+    {
+      emoji: '📈',
+      title: tr('marketPrices', lang),
+      color: '#F3E5F5',
+      onPress: () => router.push('/screens/MarketPricesScreen'),
+    },
   ];
 
   return (
@@ -115,7 +136,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1B5E20']} />}
       >
-        {/* ── Header Row: greeting + profile ── */}
+        {/* ── Header ── */}
         <View style={S.header}>
           <View style={{ flex: 1 }}>
             <Text style={S.greeting}>{getGreeting(lang)} 👋</Text>
@@ -132,7 +153,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* ── Language Switcher — full width row below header ── */}
+        {/* ── Language Switcher Row ── */}
         <View style={S.langRow}>
           <Text style={S.langLabel}>
             {lang === 'EN' ? 'Language' : lang === 'TE' ? 'భాష' : 'भाषा'}
@@ -186,14 +207,13 @@ export default function HomeScreen() {
         <Text style={S.sectionTitle}>{tr('quickActions', lang)}</Text>
         <View style={S.grid}>
           {quickActions.map((item, i) => (
-            <TouchableOpacity key={i} style={[S.actionCard, { backgroundColor: item.color }]} onPress={item.onPress}>
+            <TouchableOpacity
+              key={i}
+              style={[S.actionCard, { backgroundColor: item.color }]}
+              onPress={item.onPress}
+            >
               <Text style={{ fontSize: 32, marginBottom: 6 }}>{item.emoji}</Text>
               <Text style={S.actionTitle}>{item.title}</Text>
-              {item.soon && (
-                <View style={S.soonBadge}>
-                  <Text style={{ fontSize: 9, color: '#fff', fontWeight: 'bold' }}>Soon</Text>
-                </View>
-              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -226,29 +246,14 @@ export default function HomeScreen() {
 const S = StyleSheet.create({
   safe:         { flex: 1, backgroundColor: '#F1F8E9' },
   scroll:       { paddingHorizontal: 20, paddingBottom: 40 },
-
-  // Header — greeting + profile only
   header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, paddingBottom: 10 },
   greeting:     { fontSize: 13, color: '#558B2F', fontWeight: '600' },
   farmerName:   { fontSize: 22, fontWeight: 'bold', color: '#1B5E20', marginTop: 2 },
   locRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 },
   locText:      { fontSize: 12, color: '#558B2F', maxWidth: 220 },
   profileBtn:   { width: 48, height: 48, borderRadius: 24, backgroundColor: '#C8E6C9', alignItems: 'center', justifyContent: 'center' },
-
-  // Language switcher row — separate from header
-  langRow:      {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#1B5E20',
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginBottom: 14,
-  },
+  langRow:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1B5E20', borderRadius: 14, paddingHorizontal: 16, paddingVertical: 10, marginBottom: 14 },
   langLabel:    { color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: '600' },
-
-  // Weather
   weatherCard:  { backgroundColor: '#1B5E20', borderRadius: 20, padding: 18, marginBottom: 14, elevation: 4, shadowColor: '#1B5E20', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
   weatherTop:   { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   temp:         { fontSize: 44, fontWeight: 'bold', color: '#fff', lineHeight: 48 },
@@ -257,21 +262,14 @@ const S = StyleSheet.create({
   weatherStat:  { fontSize: 12, color: '#C8E6C9' },
   weatherMuted: { color: '#C8E6C9', fontSize: 14 },
   advisory:     { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 10, padding: 10 },
-
-  // Season
   seasonCard:   { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 18, flexDirection: 'row', alignItems: 'center', borderLeftWidth: 5, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4 },
   seasonName:   { fontSize: 15, fontWeight: 'bold', color: '#212121', marginBottom: 2 },
   seasonMonths: { fontSize: 11, color: '#757575', marginBottom: 3 },
   seasonCrops:  { fontSize: 12, color: '#388E3C', fontWeight: '600' },
-
-  // Actions
   sectionTitle: { fontSize: 17, fontWeight: 'bold', color: '#1B5E20', marginBottom: 12 },
   grid:         { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 22 },
-  actionCard:   { width: '47%', borderRadius: 14, padding: 14, alignItems: 'center', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4, position: 'relative' },
+  actionCard:   { width: '47%', borderRadius: 14, padding: 14, alignItems: 'center', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4 },
   actionTitle:  { fontSize: 13, fontWeight: '700', color: '#212121', textAlign: 'center' },
-  soonBadge:    { position: 'absolute', top: 8, right: 8, backgroundColor: '#FF8F00', borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 },
-
-  // Farm Overview
   farmCard:     { backgroundColor: '#fff', borderRadius: 14, padding: 4, marginBottom: 14, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4 },
   farmRow:      { flexDirection: 'row', alignItems: 'center', padding: 12 },
   farmLabel:    { fontSize: 11, color: '#757575', marginBottom: 2 },
