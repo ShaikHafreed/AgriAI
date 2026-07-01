@@ -148,7 +148,7 @@ const CROPS = {
 };
 
 // ─── CROP CARD ───────────────────────────────────────────────────────────────
-function CropCard({ crop, lang, onExplain, explaining, onSpeak }) {
+function CropCard({ crop, lang, onExplain, explaining, onSpeak, onOrganic }) {
   const rankColors = ['#F59E0B', '#94A3B8', '#CD7F32'];
   return (
     <View style={S.cropCard}>
@@ -189,7 +189,7 @@ function CropCard({ crop, lang, onExplain, explaining, onSpeak }) {
         ))}
       </View>
 
-      {/* Pass lang to onExplain */}
+      {/* AI Explain button */}
       <TouchableOpacity
         style={[S.explainBtn, explaining && { opacity: 0.7 }]}
         onPress={() => onExplain(crop, lang)}
@@ -204,6 +204,19 @@ function CropCard({ crop, lang, onExplain, explaining, onSpeak }) {
             </Text>
           </>
         )}
+      </TouchableOpacity>
+
+      {/* Organic Prep + YouTube button */}
+      <TouchableOpacity
+        style={S.organicBtn}
+        onPress={() => onOrganic(crop, lang)}
+        activeOpacity={0.85}
+      >
+        <Text style={{ fontSize: 16 }}>🌿</Text>
+        <Text style={S.organicBtnText}>
+          {lang === 'TE' ? 'సేంద్రీయ తయారీ + YouTube' : lang === 'HI' ? 'जैविक तैयारी + YouTube' : 'Organic Prep + YouTube Videos'}
+        </Text>
+        <Ionicons name="chevron-forward" size={16} color={C.green} />
       </TouchableOpacity>
 
       {crop.explanation && (
@@ -555,6 +568,10 @@ export default function CropRecommendationScreen() {
                 onExplain={getCropExplanation}
                 explaining={explainingId === crop.rank}
                 onSpeak={speak}
+                onOrganic={(c, l) => router.push({
+                  pathname: '/screens/OrganicPrepScreen',
+                  params: { crop: c.name, lang: l },
+                })}
               />
             ))}
           </Animated.View>
@@ -604,6 +621,8 @@ const S = StyleSheet.create({
   calendarLabel:    { fontSize: 9, color: C.textMuted, fontWeight: '600', textTransform: 'uppercase' },
   calendarValue:    { fontSize: 11, color: C.text, fontWeight: '700', marginTop: 2 },
   explainBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, borderRadius: 10, backgroundColor: C.purple },
+  organicBtn:       { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, backgroundColor: C.greenPale, borderWidth: 1, borderColor: C.border, marginTop: 8 },
+  organicBtnText:   { flex: 1, fontSize: 13, fontWeight: '600', color: C.green },
   explainBtnText:   { color: '#fff', fontSize: 13, fontWeight: '700' },
   explanationBox:   { backgroundColor: C.purpleLight, borderRadius: 12, padding: 12, marginTop: 10, borderLeftWidth: 3, borderLeftColor: C.purple },
   explanationHeader:{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
