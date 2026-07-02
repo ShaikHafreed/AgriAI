@@ -93,16 +93,23 @@ export default function WeatherAlertScreen() {
 
   // Shake detection
   useEffect(() => {
+    let shakeCount = 0;
+    let shakeTimer = null;
     const sub = Accelerometer.addListener(({ x, y, z }) => {
       const mag = Math.sqrt(x*x + y*y + z*z);
       const now = Date.now();
-      if (mag > 1.8 && now - lastShake.current > 3000 && !shakeActive.current) {
-        lastShake.current   = now;
-        shakeActive.current = true;
-        activateVoiceNav();
+      if (mag > 2.5 && now - lastShake.current > 500) {
+        lastShake.current = now;
+        shakeCount++;
+        clearTimeout(shakeTimer);
+        shakeTimer = setTimeout(() => { shakeCount = 0; }, 1500);
+        if (shakeCount >= 3 && !shakeActive.current) {
+          shakeCount = 0;
+          activateVoiceNav();
+        }
       }
     });
-    Accelerometer.setUpdateInterval(200);
+    Accelerometer.setUpdateInterval(100);
     return () => sub.remove();
   }, []);
 
@@ -258,6 +265,7 @@ export default function WeatherAlertScreen() {
       </LinearGradient>
 
       {/* Shake hint */}
+      <TouchableOpacity onLongPress={activateVoiceNav} delayLongPress={800} activeOpacity={0.9}>
       <Animated.View style={[S.shakeBar, isListening && { backgroundColor: C.green }, { transform: [{ scale: isListening ? pulseAnim : 1 }] }]}>
         <MaterialCommunityIcons name="vibrate" size={16} color={isListening ? '#fff' : C.green} />
         <Text style={[S.shakeText, { color: isListening ? '#fff' : C.green }]}>
@@ -266,6 +274,7 @@ export default function WeatherAlertScreen() {
             : (lang === 'TE' ? 'ఫోన్ కదిలించండి → వాయిస్ నావిగేషన్' : lang === 'HI' ? 'फोन हिलाएं → वॉयस नेविगेशन' : 'Shake phone → Voice Navigation')}
         </Text>
       </Animated.View>
+      </TouchableOpacity>
 
       <ScrollView contentContainerStyle={S.scroll} showsVerticalScrollIndicator={false}>
 
