@@ -305,6 +305,113 @@ export const t = {
     TE: 'లైవ్ మండి ధరలు తీసుకుంటోంది...',
     HI: 'लाइव मंडी भाव लोड हो रहे हैं...',
   },
+
+  // ── Task Manager ──
+  taskManager: {
+    EN: 'Task Manager',
+    TE: 'పని నిర్వాహకుడు',
+    HI: 'कार्य प्रबंधक',
+  },
+  taskManagerSubtitle: {
+    EN: 'Track your daily farm tasks',
+    TE: 'మీ రోజువారీ వ్యవసాయ పనులను ట్రాక్ చేయండి',
+    HI: 'अपने दैनिक खेती के काम ट्रैक करें',
+  },
+  tabTasks: {
+    EN: 'My Tasks',
+    TE: 'నా పనులు',
+    HI: 'मेरे कार्य',
+  },
+  tabCropCalendar: {
+    EN: 'Crop Calendar',
+    TE: 'పంట క్యాలెండర్',
+    HI: 'फसल कैलेंडर',
+  },
+  sectionToday: {
+    EN: 'Today',
+    TE: 'ఈరోజు',
+    HI: 'आज',
+  },
+  sectionUpcoming: {
+    EN: 'Upcoming',
+    TE: 'రాబోయే',
+    HI: 'आगामी',
+  },
+  sectionOverdue: {
+    EN: 'Overdue',
+    TE: 'మీరిన గడువు',
+    HI: 'समय सीमा पार',
+  },
+  sectionCompleted: {
+    EN: 'Completed',
+    TE: 'పూర్తయింది',
+    HI: 'पूर्ण',
+  },
+  noTasksYet: {
+    EN: 'No tasks yet. Tap + to add one.',
+    TE: 'ఇంకా పనులు లేవు. జోడించడానికి + నొక్కండి.',
+    HI: 'अभी कोई कार्य नहीं। जोड़ने के लिए + दबाएं।',
+  },
+  addTask: {
+    EN: 'Add Task',
+    TE: 'పని జోడించండి',
+    HI: 'कार्य जोड़ें',
+  },
+  taskTitle: {
+    EN: 'Task title',
+    TE: 'పని శీర్షిక',
+    HI: 'कार्य शीर्षक',
+  },
+  dueDate: {
+    EN: 'Due date',
+    TE: 'గడువు తేదీ',
+    HI: 'नियत तारीख',
+  },
+  setReminder: {
+    EN: 'Set reminder',
+    TE: 'రిమైండర్ సెట్ చేయండి',
+    HI: 'रिमाइंडर सेट करें',
+  },
+  save: {
+    EN: 'Save',
+    TE: 'సేవ్ చేయండి',
+    HI: 'सहेजें',
+  },
+  cancel: {
+    EN: 'Cancel',
+    TE: 'రద్దు చేయండి',
+    HI: 'रद्द करें',
+  },
+  delete: {
+    EN: 'Delete',
+    TE: 'తొలగించండి',
+    HI: 'हटाएं',
+  },
+  addReminderTasks: {
+    EN: 'Add reminder tasks',
+    TE: 'రిమైండర్ పనులు జోడించండి',
+    HI: 'रिमाइंडर कार्य जोड़ें',
+  },
+  seasonalTasksAdded: {
+    EN: 'Seasonal tasks added to your list',
+    TE: 'కాలానుగుణ పనులు మీ జాబితాకు జోడించబడ్డాయి',
+    HI: 'मौसमी कार्य आपकी सूची में जोड़े गए',
+  },
+  sow: {
+    EN: 'Sow',
+    TE: 'విత్తడం',
+    HI: 'बुवाई',
+  },
+  duration: {
+    EN: 'Duration',
+    TE: 'వ్యవధి',
+    HI: 'अवधि',
+  },
+  harvest: {
+    EN: 'Harvest',
+    TE: 'కోత',
+    HI: 'कटाई',
+  },
 };
 
 // Helper function — tr(key, lang)

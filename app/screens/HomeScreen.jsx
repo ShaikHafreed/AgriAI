@@ -82,6 +82,7 @@ export default function HomeScreen() {
         { text: l==='TE'?'📈 మార్కెట్ ధరలు':l==='HI'?'📈 बाजार भाव':'📈 Market Prices',         onPress: () => { shakeRef.current=false; router.push('/screens/MarketPricesScreen'); } },
         { text: l==='TE'?'🌱 పంట సిఫారసులు':l==='HI'?'🌱 फसल सुझाव':'🌱 Crop Recommendations', onPress: () => { shakeRef.current=false; router.push('/screens/CropRecommendationScreen'); } },
         { text: l==='TE'?'🌧️ వాతావరణ హెచ్చరిక':l==='HI'?'🌧️ मौसम अलर्ट':'🌧️ Weather Alerts', onPress: () => { shakeRef.current=false; router.push('/screens/WeatherAlertScreen'); } },
+        { text: l==='TE'?'✅ పని నిర్వాహకుడు':l==='HI'?'✅ कार्य प्रबंधक':'✅ Task Manager', onPress: () => { shakeRef.current=false; router.push('/screens/TaskManagerScreen'); } },
         { text: l==='TE'?'❌ రద్దు':l==='HI'?'❌ रद्द':'❌ Cancel', style:'cancel', onPress: () => { shakeRef.current=false; } },
       ]
     );
@@ -179,6 +180,7 @@ export default function HomeScreen() {
     { emoji:'🌧️', title:lang==='TE'?'వాతావరణ హెచ్చరికలు':lang==='HI'?'मौसम अलर्ट':'Weather Alerts',
       color:'#E1F5FE', onPress:()=>router.push('/screens/WeatherAlertScreen'),
       badge: weather?.main==='Rain'||weather?.temp>=38 ? '!' : null },
+    { emoji:'✅', title:tr('taskManager',lang),        color:'#FFF8E1', onPress:()=>router.push('/screens/TaskManagerScreen')    },
   ];
 
   return (
