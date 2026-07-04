@@ -16,15 +16,35 @@ const PENDING_KEY = 'agriai_pending_task_ops';
 let db = null;
 const getDb = () => { if (!db) db = getFirestore(app); return db; };
 
+const ANON_AUTH_TIMEOUT_MS = 8000;
+
+// Resolves to a uid, or null if auth fails/is misconfigured/never responds (e.g. flaky
+// rural network) — callers must not hang the UI waiting on Firebase indefinitely.
 export const ensureAnonAuth = () => new Promise((resolve) => {
   if (auth.currentUser) { resolve(auth.currentUser.uid); return; }
-  const unsub = onAuthStateChanged(auth, (user) => {
-    if (user) { unsub(); resolve(user.uid); }
+
+  let settled = false;
+  let unsub = () => {};
+  let timer = null;
+  const finish = (uid) => {
+    if (settled) return;
+    settled = true;
+    clearTimeout(timer);
+    unsub();
+    resolve(uid);
+  };
+
+  unsub = onAuthStateChanged(auth, (user) => {
+    if (user) finish(user.uid);
   });
+  timer = setTimeout(() => {
+    console.log('Anonymous sign-in timed out after', ANON_AUTH_TIMEOUT_MS, 'ms — check network connectivity.');
+    finish(null);
+  }, ANON_AUTH_TIMEOUT_MS);
+
   signInAnonymously(auth).catch((e) => {
     console.log('Anonymous sign-in failed — enable Anonymous auth in Firebase Console (Authentication > Sign-in method):', e.code || e.message);
-    unsub();
-    resolve(null);
+    finish(null);
   });
 });
 

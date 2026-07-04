@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { getOrganicData } from '../../utils/organicDataset';
 
-const YOUTUBE_API_KEY = 'AIzaSyClwh0MJFTaJZi4aSOhc67RsJ7Q-WguQKk';
 const C = {
   green:'#1B5E20', greenLight:'#388E3C', greenPale:'#E8F5E9',
   amber:'#E65100', amberLight:'#FFF3E0', blue:'#0277BD',

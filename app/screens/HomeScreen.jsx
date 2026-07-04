@@ -181,6 +181,7 @@ export default function HomeScreen() {
       color:'#E1F5FE', onPress:()=>router.push('/screens/WeatherAlertScreen'),
       badge: weather?.main==='Rain'||weather?.temp>=38 ? '!' : null },
     { emoji:'✅', title:tr('taskManager',lang),        color:'#FFF8E1', onPress:()=>router.push('/screens/TaskManagerScreen')    },
+    { emoji:'💰', title:tr('farmLedger',lang),         color:'#FFFDE7', onPress:()=>router.push('/screens/LedgerScreen')         },
   ];
 
   return (

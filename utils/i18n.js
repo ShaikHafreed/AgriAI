@@ -306,6 +306,13 @@ export const t = {
     HI: 'लाइव मंडी भाव लोड हो रहे हैं...',
   },
 
+  // ── Farm Ledger (Day 12) ──
+  farmLedger: {
+    EN: 'Farm Ledger',
+    TE: 'వ్యవసాయ ఖాతా పుస్తకం',
+    HI: 'खेती खाता बही',
+  },
+
   // ── Task Manager ──
   taskManager: {
     EN: 'Task Manager',
@@ -411,6 +418,83 @@ export const t = {
     EN: 'Harvest',
     TE: 'కోత',
     HI: 'कटाई',
+  },
+
+  // ── Profile ──
+  myProfile: {
+    EN: 'My Profile',
+    TE: 'నా ప్రొఫైల్',
+    HI: 'मेरी प्रोफ़ाइल',
+  },
+  guestBadge: {
+    EN: 'Guest',
+    TE: 'అతిథి',
+    HI: 'अतिथि',
+  },
+  totalTasksStat: {
+    EN: 'Total Tasks',
+    TE: 'మొత్తం పనులు',
+    HI: 'कुल कार्य',
+  },
+  completedStat: {
+    EN: 'Completed',
+    TE: 'పూర్తయింది',
+    HI: 'पूर्ण',
+  },
+  upcomingStat: {
+    EN: 'Upcoming',
+    TE: 'రాబోయేవి',
+    HI: 'आगामी',
+  },
+  accountSection: {
+    EN: 'Account',
+    TE: 'ఖాతా',
+    HI: 'खाता',
+  },
+  linkGoogleAccount: {
+    EN: 'Sign in with Google',
+    TE: 'Google తో సైన్ ఇన్ చేయండి',
+    HI: 'Google से साइन इन करें',
+  },
+  linkGoogleHint: {
+    EN: 'Sync your tasks across devices',
+    TE: 'మీ పరికరాల్లో పనులను సమకాలీకరించండి',
+    HI: 'अपने कार्यों को सभी डिवाइस पर सिंक करें',
+  },
+  signOut: {
+    EN: 'Sign Out',
+    TE: 'సైన్ అవుట్',
+    HI: 'साइन आउट',
+  },
+  signOutConfirmTitle: {
+    EN: 'Sign out?',
+    TE: 'సైన్ అవుట్ చేయాలా?',
+    HI: 'साइन आउट करें?',
+  },
+  preferencesSection: {
+    EN: 'Preferences',
+    TE: 'ప్రాధాన్యతలు',
+    HI: 'प्राथमिकताएं',
+  },
+  languageLabel: {
+    EN: 'Language',
+    TE: 'భాష',
+    HI: 'भाषा',
+  },
+  syncStatus: {
+    EN: 'Sync Status',
+    TE: 'సమకాలీకరణ స్థితి',
+    HI: 'सिंक स्थिति',
+  },
+  onlineStatus: {
+    EN: 'Online',
+    TE: 'ఆన్‌లైన్',
+    HI: 'ऑनलाइन',
+  },
+  offlineStatus: {
+    EN: 'Offline',
+    TE: 'ఆఫ్‌లైన్',
+    HI: 'ऑफ़लाइन',
   },
 };
 

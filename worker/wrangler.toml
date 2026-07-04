@@ -1,0 +1,7 @@
+name = "agriai-api-proxy"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Secrets (never put real values here — set via CLI, they aren't stored in this file):
+#   wrangler secret put OPENWEATHER_KEY
+#   wrangler secret put MARKET_API_KEY

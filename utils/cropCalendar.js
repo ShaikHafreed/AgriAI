@@ -1,12 +1,14 @@
 // utils/cropCalendar.js — Day 11
 // Seasonal crop dataset (kharif/rabi/summer) used to auto-suggest sow/harvest tasks.
 // Mirrors the crop set in CropRecommendationScreen.jsx but with numeric months so due dates are computable.
+// sowMonth/harvestMonth are 0-indexed (0 = January) to match MONTH_NAMES and JS Date — keep every
+// entry in that convention or reminder notifications will fire a month off (see monthName, nextDateForMonth).
 
 export const SEASONS = {
   kharif: {
     label: { EN: 'Kharif (Jun-Sep)', TE: 'ఖరీఫ్', HI: 'खरीफ' },
     crops: [
-      { key: 'rice',   emoji: '🌾', sowMonth: 6,  harvestMonth: 9,  names: { EN: 'Rice',   TE: 'వరి',   HI: 'चावल' } },
+      { key: 'rice',   emoji: '🌾', sowMonth: 5,  harvestMonth: 9,  names: { EN: 'Rice',   TE: 'వరి',   HI: 'चावल' } },
       { key: 'maize',  emoji: '🌽', sowMonth: 5,  harvestMonth: 8,  names: { EN: 'Maize',  TE: 'మొక్కజొన్న', HI: 'मक्का' } },
       { key: 'cotton', emoji: '🌸', sowMonth: 5,  harvestMonth: 11, names: { EN: 'Cotton', TE: 'పత్తి', HI: 'कपास' } },
     ],
@@ -14,7 +16,7 @@ export const SEASONS = {
   rabi: {
     label: { EN: 'Rabi (Oct-Jan)', TE: 'రబీ', HI: 'रबी' },
     crops: [
-      { key: 'wheat',    emoji: '🌾', sowMonth: 10, harvestMonth: 2,  names: { EN: 'Wheat',    TE: 'గోధుమ', HI: 'गेहूं' } },
+      { key: 'wheat',    emoji: '🌾', sowMonth: 9,  harvestMonth: 2,  names: { EN: 'Wheat',    TE: 'గోధుమ', HI: 'गेहूं' } },
       { key: 'mustard',  emoji: '🌿', sowMonth: 9,  harvestMonth: 1,  names: { EN: 'Mustard',  TE: 'ఆవాలు', HI: 'सरसों' } },
       { key: 'chickpea', emoji: '🫘', sowMonth: 9,  harvestMonth: 1,  names: { EN: 'Chickpea', TE: 'శనగ',   HI: 'चना' } },
     ],

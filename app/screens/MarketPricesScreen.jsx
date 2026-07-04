@@ -9,11 +9,8 @@ import { tr } from '../../utils/i18n';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { cacheSet, cacheGetStale, checkOnline } from '../../utils/offlineManager';
+import { WORKER_BASE_URL } from '../../utils/apiConfig';
 
-const SAMPLE_KEY = '579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b';
-const MY_KEY     = 'YOUR_DATA_GOV_IN_API_KEY';
-const API_KEY    = MY_KEY === 'YOUR_DATA_GOV_IN_API_KEY' ? SAMPLE_KEY : MY_KEY;
-const BASE_URL   = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070';
 const STATES     = ['All','Andhra Pradesh','Telangana','Karnataka','Maharashtra','Tamil Nadu','Kerala','Rajasthan','Uttar Pradesh','Punjab'];
 const C = { green:'#1B5E20', greenLight:'#388E3C', greenPale:'#E8F5E9', amber:'#E65100', blue:'#0277BD', bg:'#F1F8E9', card:'#FFFFFF', text:'#212121', textMuted:'#558B2F', border:'#C8E6C9', red:'#C62828' };
 
@@ -75,8 +72,7 @@ export default function MarketPricesScreen() {
       const online = await checkOnline();
       setIsOnlineData(online);
       if (online) {
-        let url = `${BASE_URL}?api-key=${API_KEY}&format=json&limit=100`;
-        if (state !== 'All') url += `&filters[state]=${encodeURIComponent(state)}`;
+        const url = `${WORKER_BASE_URL}/market-prices?state=${encodeURIComponent(state)}`;
         const res     = await fetch(url);
         const json    = await res.json();
         const records = json.records || [];

@@ -26,6 +26,7 @@ export default function RootLayout() {
         <Stack.Screen name="screens/ProfileScreen" />
         <Stack.Screen name="screens/ChatScreen" />
         <Stack.Screen name="screens/TaskManagerScreen" />
+        <Stack.Screen name="screens/LedgerScreen" />
       </Stack>
     </SafeAreaProvider>
   );

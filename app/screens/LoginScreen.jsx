@@ -15,8 +15,11 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { signInWithGoogle } from '../../utils/googleAuth';
+import { saveGuestProfile } from '../../utils/guestProfile';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -26,7 +29,20 @@ export default function LoginScreen() {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState('details'); // 'details' | 'otp'
   const [isLoading, setIsLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const generatedOtp = useRef('');
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const user = await signInWithGoogle();
+      if (user) router.replace('/screens/HomeScreen');
+    } catch (e) {
+      Alert.alert('Sign-in failed', e.message || 'Could not sign in with Google. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const validateDetails = () => {
     if (!farmerName.trim()) {
@@ -66,9 +82,10 @@ export default function LoginScreen() {
     }
     setIsLoading(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setIsLoading(false);
       if (otp === generatedOtp.current) {
+        await saveGuestProfile({ name: farmerName.trim(), mobile: mobileNumber });
         router.replace('/screens/HomeScreen');
       } else {
         Alert.alert('Incorrect Code', 'The code you entered is incorrect. Please try again.');
@@ -96,6 +113,26 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.formCard}>
+            {step === 'details' && (
+              <>
+                <TouchableOpacity
+                  style={[styles.googleButton, googleLoading && styles.actionButtonDisabled]}
+                  onPress={handleGoogleSignIn}
+                  disabled={googleLoading}
+                >
+                  <AntDesign name="google" size={20} color="#DB4437" />
+                  <Text style={styles.googleButtonText}>
+                    {googleLoading ? 'Signing in...' : 'Continue with Google'}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.dividerRow}>
+                  <View style={styles.dividerLine} />
+                  <Text style={styles.dividerText}>OR</Text>
+                  <View style={styles.dividerLine} />
+                </View>
+              </>
+            )}
             {step === 'details' ? (
               <>
                 <Text style={styles.formTitle}>Create Your Profile</Text>
@@ -224,6 +261,22 @@ const styles = StyleSheet.create({
     paddingTop: 36,
     paddingBottom: 40,
   },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E0E0E0',
+    borderRadius: 30,
+    paddingVertical: 15,
+    marginBottom: 20,
+  },
+  googleButtonText: { fontSize: 16, fontWeight: '600', color: '#3C4043' },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#E0E0E0' },
+  dividerText: { marginHorizontal: 12, fontSize: 12, color: '#9E9E9E', fontWeight: '600' },
   formTitle: { fontSize: 24, fontWeight: 'bold', color: '#212121', marginBottom: 6 },
   formSubtitle: { fontSize: 14, color: '#757575', marginBottom: 30, lineHeight: 20 },
   inputGroup: { marginBottom: 20 },

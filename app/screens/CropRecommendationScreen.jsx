@@ -13,10 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { WORKER_BASE_URL } from '../../utils/apiConfig';
 
 const RECOMMEND_URL = 'https://agriai-diagnose-v2.shaikhafreeddth.workers.dev/recommend';
-const WEATHER_API   = 'https://api.openweathermap.org/data/2.5/weather';
-const WEATHER_KEY   = '70fab3ca43ede65c216f90d25b67e765';
 
 const C = {
   green: '#1B5E20', greenLight: '#388E3C', greenPale: '#E8F5E9',
@@ -304,7 +303,7 @@ export default function CropRecommendationScreen() {
         setLocationName(name);
         locationRef.current = name;
       }
-      const res  = await fetch(`${WEATHER_API}?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}&units=metric`);
+      const res  = await fetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`);
       const data = await res.json();
       if (data.cod === 200) {
         const w = { temp: Math.round(data.main.temp), humidity: data.main.humidity, description: data.weather[0].description };

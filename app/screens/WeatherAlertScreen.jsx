@@ -15,10 +15,7 @@ import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import { Accelerometer } from 'expo-sensors';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-
-const WEATHER_API  = 'https://api.openweathermap.org/data/2.5/weather';
-const FORECAST_API = 'https://api.openweathermap.org/data/2.5/forecast';
-const WEATHER_KEY  = '70fab3ca43ede65c216f90d25b67e765';
+import { WORKER_BASE_URL } from '../../utils/apiConfig';
 
 const C = {
   green: '#1B5E20', greenLight: '#388E3C', greenPale: '#E8F5E9',
@@ -126,8 +123,8 @@ export default function WeatherAlertScreen() {
       if (address) setLocationName(`${address.city || address.district || ''}, ${address.region || ''}`);
 
       const [wRes, fRes] = await Promise.all([
-        fetch(`${WEATHER_API}?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}&units=metric`),
-        fetch(`${FORECAST_API}?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}&units=metric&cnt=6`),
+        fetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`),
+        fetch(`${WORKER_BASE_URL}/forecast?lat=${latitude}&lon=${longitude}&cnt=6`),
       ]);
       const wData = await wRes.json();
       const fData = await fRes.json();
