@@ -86,11 +86,9 @@ export default function ProfileScreen() {
       setLoading(false);
     });
 
-    (async () => {
-      const uid = await ensureAnonAuth();
-      if (uid) await loadStats(uid);
-      setLoading(false);
-    })();
+    // Triggers anonymous sign-in if there's no session yet — the listener above
+    // picks up the resulting auth state, so stats aren't fetched a second time here.
+    ensureAnonAuth();
 
     return () => { unsubAuth(); unsubNet(); };
   }, [loadStats]);
