@@ -14,9 +14,9 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GROQ_DIAGNOSE_URL } from "../../utils/apiConfig";
 
-// CORRECT — double 'e' in shaikhafreeddth
-const WORKER_URL = "https://agriai-diagnose-v2.shaikhafreeddth.workers.dev/diagnose";
+const WORKER_URL = GROQ_DIAGNOSE_URL;
 
 // ─── THEME ───────────────────────────────────────────────────────────────────
 const C = {

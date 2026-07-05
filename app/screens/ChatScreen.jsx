@@ -17,9 +17,10 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { GROQ_RECOMMEND_URL, GROQ_DIAGNOSE_URL } from '../../utils/apiConfig';
 
-const GROQ_WORKER   = 'https://agriai-diagnose-v2.shaikhafreeddth.workers.dev/recommend';
-const VISION_WORKER = 'https://agriai-diagnose-v2.shaikhafreeddth.workers.dev/diagnose';
+const GROQ_WORKER   = GROQ_RECOMMEND_URL;
+const VISION_WORKER = GROQ_DIAGNOSE_URL;
 const CHAT_KEY      = 'agriai_chat_v2';
 
 const C = {

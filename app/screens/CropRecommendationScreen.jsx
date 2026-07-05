@@ -13,9 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { WORKER_BASE_URL, GROQ_RECOMMEND_URL } from '../../utils/apiConfig';
 
-const RECOMMEND_URL = 'https://agriai-diagnose-v2.shaikhafreeddth.workers.dev/recommend';
+const RECOMMEND_URL = GROQ_RECOMMEND_URL;
 
 const C = {
   green: '#1B5E20', greenLight: '#388E3C', greenPale: '#E8F5E9',
