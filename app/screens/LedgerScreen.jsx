@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -114,6 +115,7 @@ export default function LedgerScreen() {
   const [lang, setLang] = useState('EN');
   const [entries, setEntries] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [entryType, setEntryType] = useState('expense');
@@ -124,18 +126,18 @@ export default function LedgerScreen() {
 
   const t = L[lang] || L.EN;
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const raw = await AsyncStorage.getItem(LEDGER_KEY);
-        if (raw) setEntries(JSON.parse(raw));
-      } catch (e) {
-        console.warn('Ledger load failed:', e);
-      } finally {
-        setLoaded(true);
-      }
-    })();
-  }, []);
+  const loadEntries = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(LEDGER_KEY);
+      if (raw) setEntries(JSON.parse(raw));
+    } catch (e) {
+      console.warn('Ledger load failed:', e);
+    } finally {
+      setLoaded(true);
+    }
+  };
+
+  useEffect(() => { loadEntries(); }, []);
 
   useEffect(() => {
     if (!loaded) return;
@@ -220,7 +222,17 @@ export default function LedgerScreen() {
         <LanguageSwitcher lang={lang} setLang={setLang} />
       </LinearGradient>
 
-      <ScrollView contentContainerStyle={S.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={S.scroll}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => { setRefreshing(true); await loadEntries(); setRefreshing(false); }}
+            colors={[C.green]}
+          />
+        }
+      >
         {/* Summary cards */}
         <View style={S.summaryRow}>
           <View style={[S.summaryCard, { borderLeftColor: C.red }]}>

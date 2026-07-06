@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl,
   Platform, Modal, TextInput, Switch, ActivityIndicator, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -166,6 +166,7 @@ export default function TaskManagerScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [authError, setAuthError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const uidRef = useRef(null);
 
   const refresh = async () => {
@@ -319,7 +320,17 @@ export default function TaskManagerScreen() {
           <ActivityIndicator color={C.green} size="large" />
         </View>
       ) : (
-        <ScrollView contentContainerStyle={S.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={S.scroll}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={async () => { setRefreshing(true); await refresh(); setRefreshing(false); }}
+              colors={[C.green]}
+            />
+          }
+        >
           {view === 'tasks' ? (
             tasks.length === 0 ? (
               <Text style={S.emptyText}>{tr('noTasksYet', lang)}</Text>

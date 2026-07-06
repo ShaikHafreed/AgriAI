@@ -1,46 +1,59 @@
-// components/LanguageSwitcher.jsx — Day 6
-// Fixed: works from both app/screens/ and root screens/
-// No relative imports needed — uses absolute-style from utils
+// components/LanguageSwitcher.jsx — Day 6, rebuilt Day 14 for 6-language support
+// A 3-pill inline slider doesn't scale to 6 languages in a header, so this is now
+// a compact "current language" button that opens a picker modal. Same props API
+// (lang, setLang) as before, so every screen already using it needs no changes.
 
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const LANGS  = ['EN', 'TE', 'HI'];
-const PILL_W = 52;
-const PILL_H = 26;
-const PAD    = 3;
+export const LANGUAGES = [
+  { code: 'EN', label: 'English' },
+  { code: 'TE', label: 'తెలుగు' },
+  { code: 'HI', label: 'हिन्दी' },
+  { code: 'TA', label: 'தமிழ்' },
+  { code: 'KN', label: 'ಕನ್ನಡ' },
+  { code: 'ML', label: 'മലയാളം' },
+];
 
 export default function LanguageSwitcher({ lang, setLang }) {
-  const activeIndex = LANGS.indexOf(lang);
-  const slideAnim   = useRef(new Animated.Value(activeIndex * PILL_W)).current;
-
-  useEffect(() => {
-    Animated.spring(slideAnim, {
-      toValue: activeIndex * PILL_W,
-      useNativeDriver: true,
-      tension: 180,
-      friction: 18,
-    }).start();
-  }, [activeIndex]);
+  const [open, setOpen] = useState(false);
 
   return (
-    <View style={S.track}>
-      <Animated.View style={[S.pill, { transform: [{ translateX: slideAnim }] }]} />
-      <View style={S.labels}>
-        {LANGS.map((l) => (
-          <TouchableOpacity key={l} style={S.tab} onPress={() => setLang(l)} activeOpacity={0.7}>
-            <Text style={[S.txt, { color: lang === l ? '#1B5E20' : 'rgba(255,255,255,0.8)' }]}>{l}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+    <>
+      <TouchableOpacity style={S.btn} onPress={() => setOpen(true)} activeOpacity={0.75}>
+        <Text style={S.btnText}>{lang}</Text>
+        <Ionicons name="chevron-down" size={12} color="#1B5E20" />
+      </TouchableOpacity>
+
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable style={S.backdrop} onPress={() => setOpen(false)}>
+          <Pressable style={S.sheet} onPress={(e) => e.stopPropagation()}>
+            {LANGUAGES.map(({ code, label }) => (
+              <TouchableOpacity
+                key={code}
+                style={[S.option, lang === code && S.optionActive]}
+                onPress={() => { setLang(code); setOpen(false); }}
+                activeOpacity={0.7}
+              >
+                <Text style={[S.optionText, lang === code && S.optionTextActive]}>{label}</Text>
+                {lang === code && <Ionicons name="checkmark" size={18} color="#1B5E20" />}
+              </TouchableOpacity>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
   );
 }
 
 const S = StyleSheet.create({
-  track:  { borderRadius: 30, position: 'relative', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.20)', padding: PAD, width: PILL_W * 3 + PAD * 2 },
-  pill:   { position: 'absolute', left: PAD, top: PAD, width: PILL_W, height: PILL_H, borderRadius: 26, backgroundColor: '#fff', zIndex: 0 },
-  labels: { flexDirection: 'row', zIndex: 1 },
-  tab:    { width: PILL_W, height: PILL_H, alignItems: 'center', justifyContent: 'center' },
-  txt:    { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  btn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 6 },
+  btnText: { fontSize: 12, fontWeight: '700', color: '#1B5E20' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'center', alignItems: 'center' },
+  sheet: { backgroundColor: '#fff', borderRadius: 16, paddingVertical: 8, width: 220, elevation: 6 },
+  option: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
+  optionActive: { backgroundColor: '#E8F5E9' },
+  optionText: { fontSize: 14, fontWeight: '600', color: '#212121' },
+  optionTextActive: { color: '#1B5E20', fontWeight: '700' },
 });
