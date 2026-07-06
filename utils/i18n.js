@@ -496,6 +496,43 @@ export const t = {
     TE: 'ఆఫ్‌లైన్',
     HI: 'ऑफ़लाइन',
   },
+
+  // ── Govt Schemes (Day 13) ──
+  govtSchemes: {
+    EN: 'Govt. Schemes',
+    TE: 'ప్రభుత్వ పథకాలు',
+    HI: 'सरकारी योजनाएं',
+  },
+  govtSchemesSubtitle: {
+    EN: 'Subsidies & support for farmers',
+    TE: 'రైతులకు రాయితీలు & మద్దతు',
+    HI: 'किसानों के लिए सब्सिडी और सहायता',
+  },
+  govtSchemesBanner: {
+    EN: 'Major central government schemes for farmers — check eligibility, application steps, and apply directly on the official portal.',
+    TE: 'రైతుల కోసం ప్రధాన కేంద్ర ప్రభుత్వ పథకాలు — అర్హతను తనిఖీ చేయండి, దరఖాస్తు దశలు చూడండి, అధికారిక పోర్టల్‌లో నేరుగా దరఖాస్తు చేసుకోండి.',
+    HI: 'किसानों के लिए प्रमुख केंद्र सरकार की योजनाएं — पात्रता जांचें, आवेदन के चरण देखें, और आधिकारिक पोर्टल पर सीधे आवेदन करें।',
+  },
+  govtSchemesDisclaimer: {
+    EN: 'Scheme details can change. Always verify the latest eligibility and application process on the official government portal before applying.',
+    TE: 'పథక వివరాలు మారవచ్చు. దరఖాస్తు చేసే ముందు అధికారిక ప్రభుత్వ పోర్టల్‌లో తాజా అర్హత మరియు దరఖాస్తు ప్రక్రియను ఎల్లప్పుడూ ధృవీకరించుకోండి.',
+    HI: 'योजना का विवरण बदल सकता है। आवेदन करने से पहले आधिकारिक सरकारी पोर्टल पर नवीनतम पात्रता और आवेदन प्रक्रिया अवश्य सत्यापित करें।',
+  },
+  eligibility: {
+    EN: 'Eligibility',
+    TE: 'అర్హత',
+    HI: 'पात्रता',
+  },
+  howToApply: {
+    EN: 'How to Apply',
+    TE: 'ఎలా దరఖాస్తు చేయాలి',
+    HI: 'आवेदन कैसे करें',
+  },
+  visitOfficialSite: {
+    EN: 'Visit Official Site',
+    TE: 'అధికారిక సైట్‌ని సందర్శించండి',
+    HI: 'आधिकारिक साइट पर जाएं',
+  },
 };
 
 // Helper function — tr(key, lang)
