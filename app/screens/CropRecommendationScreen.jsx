@@ -14,6 +14,7 @@ import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { WORKER_BASE_URL, GROQ_RECOMMEND_URL } from '../../utils/apiConfig';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const RECOMMEND_URL = GROQ_RECOMMEND_URL;
 
@@ -470,7 +471,7 @@ export default function CropRecommendationScreen() {
   return (
     <SafeAreaView style={S.root}>
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={{ padding: 4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1, marginLeft: 10 }}>

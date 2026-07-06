@@ -21,6 +21,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 import { tr } from '../../utils/i18n';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const C = {
   green: '#1B5E20', greenLight: '#388E3C', greenPale: '#E8F5E9',
@@ -136,7 +137,7 @@ export default function ProfileScreen() {
       <OfflineBanner />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 + BOTTOM_NAV_HEIGHT }}>
         <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-          <TouchableOpacity onPress={() => router.back()} style={S.backBtn}>
+          <TouchableOpacity onPress={() => safeGoBack(router)} style={S.backBtn}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
           <View style={{ position: 'absolute', top: Platform.OS === 'ios' ? 8 : 4, right: 14 }}>

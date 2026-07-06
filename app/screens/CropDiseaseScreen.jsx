@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GROQ_DIAGNOSE_URL } from "../../utils/apiConfig";
+import { safeGoBack } from "../../utils/navHelpers";
 
 const WORKER_URL = GROQ_DIAGNOSE_URL;
 
@@ -191,7 +192,7 @@ If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A",
       <StatusBar barStyle="light-content" backgroundColor={C.green} />
 
       <LinearGradient colors={[C.green, C.greenLight]} style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1, marginLeft: 10 }}>

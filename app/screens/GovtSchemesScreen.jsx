@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { tr } from '../../utils/i18n';
+import { safeGoBack } from '../../utils/navHelpers';
 import { GOVT_SCHEMES } from '../../utils/govtSchemes';
 
 const C = {
@@ -81,7 +82,7 @@ export default function GovtSchemesScreen() {
     <SafeAreaView style={S.root}>
       <OfflineBanner />
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={{ padding: 4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1, marginLeft: 10 }}>

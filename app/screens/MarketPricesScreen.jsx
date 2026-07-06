@@ -10,6 +10,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { cacheSet, cacheGetStale, checkOnline } from '../../utils/offlineManager';
 import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const STATES     = ['All','Andhra Pradesh','Telangana','Karnataka','Maharashtra','Tamil Nadu','Kerala','Rajasthan','Uttar Pradesh','Punjab'];
 const C = { green:'#1B5E20', greenLight:'#388E3C', greenPale:'#E8F5E9', amber:'#E65100', blue:'#0277BD', bg:'#F1F8E9', card:'#FFFFFF', text:'#212121', textMuted:'#558B2F', border:'#C8E6C9', red:'#C62828' };
@@ -111,7 +112,7 @@ export default function MarketPricesScreen() {
     <SafeAreaView style={{ flex:1, backgroundColor:C.bg }}>
       <OfflineBanner />
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={()=>router.back()} style={{ padding:4 }}>
+        <TouchableOpacity onPress={()=>safeGoBack(router)} style={{ padding:4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex:1, marginLeft:10 }}>

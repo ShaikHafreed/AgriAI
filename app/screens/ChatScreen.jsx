@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import BottomNavBar from '../../components/BottomNavBar';
 import { GROQ_RECOMMEND_URL, GROQ_DIAGNOSE_URL } from '../../utils/apiConfig';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const GROQ_WORKER   = GROQ_RECOMMEND_URL;
 const VISION_WORKER = GROQ_DIAGNOSE_URL;
@@ -312,7 +313,7 @@ export default function ChatScreen() {
     <SafeAreaView style={S.root}>
       {/* Header */}
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={{ padding: 4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={S.headerCenter}>

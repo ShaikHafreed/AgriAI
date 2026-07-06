@@ -26,6 +26,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 import OfflineBanner from '../../components/OfflineBanner';
 import { tr } from '../../utils/i18n';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const LEDGER_KEY = '@agriai_ledger_entries_v1';
 
@@ -209,7 +210,7 @@ export default function LedgerScreen() {
     <SafeAreaView style={S.root}>
       <OfflineBanner />
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={{ padding: 4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1, marginLeft: 10 }}>

@@ -16,6 +16,7 @@ import * as Speech from 'expo-speech';
 import { Accelerometer } from 'expo-sensors';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { safeGoBack } from '../../utils/navHelpers';
 
 const C = {
   green: '#1B5E20', greenLight: '#388E3C', greenPale: '#E8F5E9',
@@ -251,7 +252,7 @@ export default function WeatherAlertScreen() {
   return (
     <SafeAreaView style={S.root}>
       <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+        <TouchableOpacity onPress={() => safeGoBack(router)} style={{ padding: 4 }}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1, marginLeft: 10 }}>
