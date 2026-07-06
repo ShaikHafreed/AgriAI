@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import BottomNavBar from '../../components/BottomNavBar';
 import { GROQ_RECOMMEND_URL, GROQ_DIAGNOSE_URL } from '../../utils/apiConfig';
 
 const GROQ_WORKER   = GROQ_RECOMMEND_URL;
@@ -394,6 +395,7 @@ export default function ChatScreen() {
         </View>
 
       </KeyboardAvoidingView>
+      <BottomNavBar active="chat" lang={lang} floating={false} />
     </SafeAreaView>
   );
 }

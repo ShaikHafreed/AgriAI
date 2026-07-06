@@ -23,6 +23,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 import OfflineBanner from '../../components/OfflineBanner';
 import { tr } from '../../utils/i18n';
 
@@ -295,7 +296,7 @@ export default function LedgerScreen() {
           )}
         </View>
 
-        <View style={{ height: 110 }} />
+        <View style={{ height: 110 + BOTTOM_NAV_HEIGHT }} />
       </ScrollView>
 
       {/* Floating add buttons */}
@@ -340,6 +341,8 @@ export default function LedgerScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      <BottomNavBar active="ledger" lang={lang} />
     </SafeAreaView>
   );
 }
@@ -399,7 +402,7 @@ const S = StyleSheet.create({
   entryDate: { fontSize: 11, color: '#B2BABB', marginTop: 2 },
   entryAmt: { fontSize: 15, fontWeight: '800' },
 
-  fabRow: { position: 'absolute', bottom: 24, left: 16, right: 16, flexDirection: 'row', gap: 12 },
+  fabRow: { position: 'absolute', bottom: 24 + BOTTOM_NAV_HEIGHT, left: 16, right: 16, flexDirection: 'row', gap: 12 },
   fab: {
     flex: 1, borderRadius: 28, paddingVertical: 15, alignItems: 'center', elevation: 4,
     shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 3 },

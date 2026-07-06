@@ -15,8 +15,9 @@ import { tr } from '../../utils/i18n';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { cacheSet, cacheGetStale, checkOnline } from '../../utils/offlineManager';
-
-const WEATHER_API_KEY = '70fab3ca43ede65c216f90d25b67e765';
+import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import DrawerMenu from '../../components/DrawerMenu';
+import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 
 const getSeasonName = (lang) => {
   const m = new Date().getMonth() + 1;
@@ -39,6 +40,7 @@ export default function HomeScreen() {
   const [isLoadingWth, setIsLoadingWth] = useState(true);
   const [refreshing, setRefreshing]     = useState(false);
   const [offline, setOffline]           = useState(false);
+  const [drawerOpen, setDrawerOpen]     = useState(false);
   const langRef   = useRef('EN');
   const lastShake = useRef(0);
   const shakeRef  = useRef(false);
@@ -95,7 +97,7 @@ export default function HomeScreen() {
       setOffline(!online);
 
       if (online) {
-        const res  = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`);
+        const res  = await fetch(`${WORKER_BASE_URL}/weather?lat=${lat}&lon=${lon}`);
         const data = await res.json();
         if (data.cod === 200) {
           const w = {
@@ -204,6 +206,9 @@ export default function HomeScreen() {
 
         {/* Header */}
         <View style={S.header}>
+          <TouchableOpacity style={S.menuBtn} onPress={() => setDrawerOpen(true)}>
+            <Text style={{ fontSize: 22, color: '#1B5E20' }}>☰</Text>
+          </TouchableOpacity>
           <View style={{ flex: 1 }}>
             <Text style={S.greeting}>{getGreeting(lang)} 👋</Text>
             <Text style={S.farmerName}>{tr('welcomeFarmer', lang)}</Text>
@@ -308,13 +313,16 @@ export default function HomeScreen() {
 
         <Text style={S.hint}>{tr('pullRefresh', lang)}</Text>
       </ScrollView>
+
+      <DrawerMenu visible={drawerOpen} onClose={() => setDrawerOpen(false)} lang={lang} active="home" />
+      <BottomNavBar active="home" lang={lang} />
     </SafeAreaView>
   );
 }
 
 const S = StyleSheet.create({
   safe:         { flex:1, backgroundColor:'#F1F8E9' },
-  scroll:       { paddingHorizontal:20, paddingBottom:40 },
+  scroll:       { paddingHorizontal:20, paddingBottom:40 + BOTTOM_NAV_HEIGHT },
   offlineBadge: { backgroundColor:'#FFF3E0', borderRadius:10, padding:10, marginTop:8, marginBottom:4, borderLeftWidth:3, borderLeftColor:'#E65100' },
   offlineBadgeText: { fontSize:12, color:'#E65100', fontWeight:'600' },
   header:       { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingTop:16, paddingBottom:10 },
@@ -323,6 +331,7 @@ const S = StyleSheet.create({
   locRow:       { flexDirection:'row', alignItems:'center', marginTop:4, gap:4 },
   locText:      { fontSize:12, color:'#558B2F', maxWidth:220 },
   profileBtn:   { width:48, height:48, borderRadius:24, backgroundColor:'#C8E6C9', alignItems:'center', justifyContent:'center' },
+  menuBtn:      { width:40, height:40, borderRadius:20, alignItems:'center', justifyContent:'center', marginRight:6 },
   langRow:      { flexDirection:'row', alignItems:'center', justifyContent:'space-between', backgroundColor:'#1B5E20', borderRadius:14, paddingHorizontal:16, paddingVertical:10, marginBottom:14 },
   langLabel:    { color:'rgba(255,255,255,0.85)', fontSize:13, fontWeight:'600' },
   shakeHint:    { color:'rgba(255,255,255,0.65)', fontSize:10, marginTop:2 },

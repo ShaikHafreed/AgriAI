@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 import OfflineBanner from '../../components/OfflineBanner';
 import { tr } from '../../utils/i18n';
 import {
@@ -359,7 +360,7 @@ export default function TaskManagerScreen() {
               </TouchableOpacity>
             </View>
           )}
-          <View style={{ height: 80 }} />
+          <View style={{ height: 80 + BOTTOM_NAV_HEIGHT }} />
         </ScrollView>
       )}
 
@@ -370,6 +371,7 @@ export default function TaskManagerScreen() {
       )}
 
       <AddTaskModal visible={modalVisible} lang={lang} onClose={() => setModalVisible(false)} onSave={handleSaveTask} />
+      <BottomNavBar active="tasks" lang={lang} />
     </SafeAreaView>
   );
 }
@@ -395,7 +397,7 @@ const S = StyleSheet.create({
   taskTitle: { fontSize: 14, fontWeight: '600', color: C.text },
   taskTitleDone: { textDecorationLine: 'line-through', color: C.textMuted },
   taskDue: { fontSize: 11, color: C.textMuted, marginTop: 2 },
-  fab: { position: 'absolute', right: 20, bottom: 24, width: 54, height: 54, borderRadius: 27, backgroundColor: C.green, justifyContent: 'center', alignItems: 'center', elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 6 },
+  fab: { position: 'absolute', right: 20, bottom: 24 + BOTTOM_NAV_HEIGHT, width: 54, height: 54, borderRadius: 27, backgroundColor: C.green, justifyContent: 'center', alignItems: 'center', elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 6 },
   cropCard: { backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: C.border },
   cropTitle: { fontSize: 14, fontWeight: '700', color: C.text, marginBottom: 10 },
   calendarRow: { flexDirection: 'row', justifyContent: 'space-between' },

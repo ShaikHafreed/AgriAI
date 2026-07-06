@@ -19,6 +19,7 @@ import { getGuestProfile } from '../../utils/guestProfile';
 import { checkOnline, addNetworkListener } from '../../utils/offlineManager';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
+import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 import { tr } from '../../utils/i18n';
 
 const C = {
@@ -133,7 +134,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={S.root}>
       <OfflineBanner />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 + BOTTOM_NAV_HEIGHT }}>
         <LinearGradient colors={[C.green, C.greenLight]} style={S.header}>
           <TouchableOpacity onPress={() => router.back()} style={S.backBtn}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -190,6 +191,8 @@ export default function ProfileScreen() {
           />
         </View>
       </ScrollView>
+
+      <BottomNavBar active="profile" lang={lang} />
     </SafeAreaView>
   );
 }

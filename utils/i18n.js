@@ -533,6 +533,16 @@ export const t = {
     TE: 'అధికారిక సైట్‌ని సందర్శించండి',
     HI: 'आधिकारिक साइट पर जाएं',
   },
+
+  // ── Bottom Nav + Drawer Menu (Day 13) ──
+  navHome: { EN: 'Home', TE: 'హోమ్', HI: 'होम' },
+  navChat: { EN: 'Chat', TE: 'చాట్', HI: 'चैट' },
+  navTasks: { EN: 'Tasks', TE: 'పనులు', HI: 'कार्य' },
+  navLedger: { EN: 'Ledger', TE: 'ఖాతా', HI: 'बही' },
+  navProfile: { EN: 'Profile', TE: 'ప్రొఫైల్', HI: 'प्रोफ़ाइल' },
+  navWeather: { EN: 'Weather', TE: 'వాతావరణం', HI: 'मौसम' },
+  navOrganicPrep: { EN: 'Organic Prep', TE: 'సేంద్రీయ తయారీ', HI: 'जैविक तैयारी' },
+  menuTitle: { EN: 'Menu', TE: 'మెనూ', HI: 'मेनू' },
 };
 
 // Helper function — tr(key, lang)
