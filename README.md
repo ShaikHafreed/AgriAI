@@ -1,10 +1,19 @@
 # 🌾 AgriAI
 
 AgriAI is a mobile app for Indian farmers that brings AI-powered crop guidance, disease
-detection, live market/weather data, and farm record-keeping into one offline-friendly app —
-in English, Telugu, and Hindi.
+detection, live market/weather data, government scheme info, and farm record-keeping into
+one offline-friendly app — in English, Telugu, Hindi, Tamil, Kannada, and Malayalam.
 
 Built with **Expo / React Native**, **Firebase**, and a **Cloudflare Workers** backend.
+
+## 📲 Try It Now
+
+Install the latest Android build directly — no Play Store needed:
+
+**[Download AgriAI (Android)](https://expo.dev/accounts/hafreex/projects/agriai/builds/793d3efa-3e38-4674-8097-4b2c21d39317)**
+
+Open the link on an Android phone and tap install (Android will ask you to allow
+"install from unknown sources" — expected, since this isn't distributed via the Play Store yet).
 
 ## Features
 
@@ -18,9 +27,14 @@ Built with **Expo / React Native**, **Firebase**, and a **Cloudflare Workers** b
 | ✅ Task Manager | Daily farm task list, seasonal crop-calendar auto-suggestions, and scheduled reminders |
 | 💰 Farm Ledger | Offline expense/income tracker with per-crop profit tracking |
 | 🌿 Organic Prep | Organic treatment recipes (Jeevamrutha, Panchagavya, etc.) with curated video links |
-| 👤 Profile | Account (Google sign-in or guest), live task stats, language & sync preferences |
+| 🏛️ Govt Schemes | Major central schemes (PM-KISAN, PMFBY, KCC, Soil Health Card, and more) with eligibility & how-to-apply steps |
+| 👤 Profile | Google sign-in or guest, editable name/photo, live task stats, language & sync preferences |
 
-Every screen supports **English, Telugu, and Hindi**, including voice output on select screens.
+**Navigation**: an animated bottom nav bar for the 5 core screens, plus a slide-out drawer menu
+for everything else — with pull-to-refresh throughout.
+
+Every screen supports **English, Telugu, Hindi, Tamil, Kannada, and Malayalam**, including
+voice output on select screens.
 
 ## Architecture
 
@@ -105,8 +119,8 @@ npx eas-cli build --profile preview --platform android
 app/
   _layout.jsx           # expo-router stack
   screens/               # one file per screen
-components/              # shared UI (LanguageSwitcher, OfflineBanner)
-utils/                   # i18n, offline cache, task/crop-calendar logic, auth helpers
+components/              # shared UI (BottomNavBar, DrawerMenu, LanguageSwitcher, OfflineBanner)
+utils/                   # i18n (6 languages), offline cache, task/crop-calendar logic, auth helpers
 worker/                  # Cloudflare Worker — proxies weather + market-price APIs
 firebaseConfig.js
 eas.json                 # EAS build profiles (development / preview / production)
@@ -117,3 +131,4 @@ eas.json                 # EAS build profiles (development / preview / productio
 - This is an active learning/personal project, built iteratively day by day (see commit history).
 - Anonymous Firestore accounts are upgraded (linked, not replaced) to a Google account on
   sign-in, so guest-created tasks aren't lost.
+- No third-party API keys, secrets, or Firebase credentials are committed to this repo.
