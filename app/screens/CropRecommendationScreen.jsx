@@ -36,11 +36,12 @@ const getSeason = () => {
 
 const getSeasonLabel = (lang) => {
   const s = getSeason();
-  return {
+  const labels = {
     kharif: { EN: 'Kharif (Jun-Sep)', TE: 'ఖరీఫ్', HI: 'खरीफ' },
     rabi:   { EN: 'Rabi (Oct-Jan)',   TE: 'రబీ',   HI: 'रबी'  },
     summer: { EN: 'Summer (Feb-May)', TE: 'వేసవి',  HI: 'ग्रीष्म' },
-  }[s][lang];
+  }[s];
+  return labels[lang] || labels.EN;
 };
 
 // ── Speak helper ──────────────────────────────────────────────────────────────
@@ -273,7 +274,7 @@ export default function CropRecommendationScreen() {
     setRecs(prev => {
       if (prev.length === 0) return prev;
       // Map current recs to new language using index
-      const langCrops = CROPS[season][newLang];
+      const langCrops = CROPS[season][newLang] || CROPS[season].EN;
       return prev.map((r, i) => {
         const template = langCrops[i] || langCrops[0];
         return {

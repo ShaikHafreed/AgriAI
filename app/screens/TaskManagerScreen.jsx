@@ -346,7 +346,7 @@ export default function TaskManagerScreen() {
             )
           ) : (
             <View style={S.section}>
-              <Text style={S.sectionTitle}>{SEASONS[currentSeason].label[lang]}</Text>
+              <Text style={S.sectionTitle}>{SEASONS[currentSeason].label[lang] || SEASONS[currentSeason].label.EN}</Text>
               {SEASONS[currentSeason].crops.map((crop) => (
                 <View key={crop.key} style={S.cropCard}>
                   <Text style={S.cropTitle}>{crop.emoji} {crop.names[lang] || crop.names.EN}</Text>

@@ -339,7 +339,7 @@ export default function WeatherAlertScreen() {
           <View style={S.settingsCard}>
             {Object.entries(alertSettings).map(([key, val]) => (
               <View key={key} style={S.settingRow}>
-                <Text style={S.settingLabel}>{alertLabels[key][lang]}</Text>
+                <Text style={S.settingLabel}>{alertLabels[key][lang] || alertLabels[key].EN}</Text>
                 <Switch
                   value={val}
                   onValueChange={() => setAlertSettings(p => ({ ...p, [key]: !p[key] }))}

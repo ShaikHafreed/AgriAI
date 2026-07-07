@@ -307,7 +307,7 @@ export default function ChatScreen() {
     ]
   );
 
-  const imgTypes = IMAGE_TYPES[lang];
+  const imgTypes = IMAGE_TYPES[lang] || IMAGE_TYPES.EN;
 
   return (
     <SafeAreaView style={S.root}>
@@ -366,7 +366,7 @@ export default function ChatScreen() {
 
         {/* Quick questions */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={S.quickScroll} contentContainerStyle={S.quickRow}>
-          {QUICK_QUESTIONS[lang].map((q, i) => (
+          {(QUICK_QUESTIONS[lang] || QUICK_QUESTIONS.EN).map((q, i) => (
             <TouchableOpacity key={i} style={S.quickChip} onPress={() => sendMessage(q)} disabled={loading}>
               <Text style={S.quickChipText} numberOfLines={1}>{q}</Text>
             </TouchableOpacity>
