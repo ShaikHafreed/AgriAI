@@ -6,6 +6,8 @@ one offline-friendly app — in English, Telugu, Hindi, Tamil, Kannada, and Mala
 
 Built with **Expo / React Native**, **Firebase**, and a **Cloudflare Workers** backend.
 
+🌐 **Landing page:** [agriai.hafreedshaik.online](https://agriai.hafreedshaik.online)
+
 ## 📲 Try It Now
 
 Install the latest Android build directly — no Play Store needed:
