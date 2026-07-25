@@ -4,7 +4,7 @@ AgriAI is a mobile app for Indian farmers that brings AI-powered crop guidance, 
 detection, live market/weather data, government scheme info, and farm record-keeping into
 one offline-friendly app — in English, Telugu, Hindi, Tamil, Kannada, and Malayalam.
 
-Built with **Expo / React Native**, **Firebase**, and a **Cloudflare Workers** backend.
+Built with **Expo / React Native**, **Firebase**, **Cloudflare Workers**, and **Groq** for AI.
 
 🌐 **Landing page:** [agriai.hafreedshaik.online](https://agriai.hafreedshaik.online)
 
@@ -41,30 +41,63 @@ voice output on select screens.
 ## Architecture
 
 ```
-┌─────────────────────┐
-│   Expo / React      │  screens under app/screens/, routed with expo-router
-│   Native client      │
-└─────────┬────────────┘
-          │
-          ├── Firebase Auth + Firestore  → anonymous + Google sign-in, per-user tasks
-          │
-          └── Cloudflare Worker (worker/) → proxies OpenWeatherMap + data.gov.in,
-                                             keeping real API keys off the device
+┌───────────────────────┐
+│  Expo / React Native   │  screens under app/screens/, routed with expo-router
+│  mobile client         │
+└──────────┬──────────────┘
+           │
+           ├── Firebase Auth + Firestore     → anonymous + Google sign-in, per-user tasks
+           │
+           ├── Cloudflare Worker (worker/)   → proxies OpenWeatherMap + data.gov.in,
+           │                                    keeping real API keys off the device
+           │
+           └── Cloudflare Worker (agriai-diagnose-v2, deployed separately)
+                                             → proxies Groq for chat, crop recommendations,
+                                                and photo-based disease diagnosis
+
+┌───────────────────────┐
+│  landing/ (static)     │  →  Vercel  →  agriai.hafreedshaik.online (DNS on Hostinger)
+└───────────────────────┘
 ```
 
-Third-party API keys (weather, market prices) are never bundled into the app — they're
-held as Cloudflare Worker secrets, and the client calls the Worker instead of the upstream
-APIs directly. The existing `agriai-diagnose-v2` Worker (referenced in `ChatScreen.jsx` /
-`CropDiseaseScreen.jsx` / `CropRecommendationScreen.jsx`) similarly proxies AI diagnosis calls.
+Third-party API keys (weather, market prices, Groq) are never bundled into the app —
+they're held as Cloudflare Worker secrets, and the client calls the Worker instead of the
+upstream APIs directly.
 
 ## Tech Stack
 
-- **Expo SDK 54** / React Native 0.81 / expo-router
-- **Firebase** — Authentication (anonymous + Google), Firestore
-- **Cloudflare Workers** — API key proxy (`worker/`)
-- **@react-native-google-signin** — native Google sign-in (requires an EAS dev/standalone build, not Expo Go)
-- **expo-notifications** — scheduled local task reminders
-- AsyncStorage-backed offline cache + mutation queue for tasks, market prices, and the ledger
+### Frontend (mobile app)
+- **[Expo](https://expo.dev) SDK 54** on **React Native 0.81** + **React 19**
+- **expo-router 6** — file-based navigation (`app/screens/`), replacing React Navigation boilerplate
+- **@react-native-google-signin** — native on-device Google account picker (needs a custom dev/standalone build; not supported in plain Expo Go)
+- **expo-notifications** — scheduled local push notifications for task reminders
+- **expo-speech** — text-to-speech voice read-out (weather alerts, chat replies)
+- **expo-location**, **expo-image-picker**, **expo-image-manipulator** — GPS for weather/crop context, camera/gallery capture, and client-side image compression before upload
+- **expo-linear-gradient**, **react-native-webview**, **@react-native-community/datetimepicker** — UI and media rendering
+- Custom UI system (no component library) — `components/BottomNavBar.jsx` (animated sliding-indicator tab bar), `components/DrawerMenu.jsx`, `components/LanguageSwitcher.jsx`, `components/OfflineBanner.jsx`
+
+### Backend
+- **[Cloudflare Workers](https://workers.cloudflare.com)** — two serverless edge functions, no traditional server to manage:
+  - `worker/` (this repo) — proxies OpenWeatherMap and data.gov.in market-price APIs, and exists solely so third-party API keys stay server-side as Worker Secrets instead of being bundled into the app
+  - `agriai-diagnose-v2` (deployed separately) — proxies AI calls for crop recommendations, chat, and disease-image diagnosis
+- **Groq** — LLM/vision inference (fast Llama-family models) behind the diagnose Worker, for chat responses, crop recommendations, and photo-based disease diagnosis
+- Plain `fetch` from the client to both Workers — no GraphQL/REST framework needed for a surface this small
+
+### Database & Auth
+- **Firebase Authentication** — anonymous sign-in on first launch, upgraded (linked, not replaced) to a Google account so guest-created data isn't lost
+- **Cloud Firestore** — per-user task storage at `users/{uid}/tasks`
+
+### Offline & local storage
+- **AsyncStorage** — offline cache and mutation queue for tasks, market prices, and the farm ledger, plus locally stored profile overrides (name/photo) and guest profile data
+- **@react-native-community/netinfo** — connectivity detection driving the offline banner and sync logic
+
+### Landing page / web
+- Static **HTML/CSS/vanilla JS** (`landing/`), no framework — deployed on **[Vercel](https://vercel.com)** at [agriai.hafreedshaik.online](https://agriai.hafreedshaik.online), DNS on Hostinger
+
+### Build & deployment
+- **EAS Build** (`eas.json`) — `development` (dev client), `preview` (standalone installable APK), and `production` profiles
+- **EAS CLI** / **Wrangler CLI** — building the app and deploying the Cloudflare Worker respectively
+- **Vercel CLI** — landing page deploys and custom domain/DNS management
 
 ## Getting Started
 
