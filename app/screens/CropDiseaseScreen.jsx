@@ -111,6 +111,54 @@ export default function CropDiseaseScreen() {
     setError(null);
   };
 
+  const DIAGNOSE_PROMPT = `You are an expert agricultural plant pathologist.
+Analyse this crop photo and respond ONLY with valid JSON — no markdown, no text outside JSON.
+{
+  "disease_name": "specific disease name or Healthy Crop",
+  "confidence": number 0-100,
+  "cause": "pathogen or cause in one sentence",
+  "symptoms": "visible signs in 2 sentences",
+  "treatment": "recommended treatment in 2 sentences",
+  "remedy_steps": ["Step 1", "Step 2", "Step 3", "Step 4"],
+  "search_query": "agri shop near me for <disease_name> treatment"
+}
+If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A","symptoms":"N/A","treatment":"N/A","remedy_steps":[],"search_query":""}`;
+
+  // Calls the worker once and returns the parsed result, or null if the model
+  // didn't reply with JSON we can extract (caller decides whether to retry).
+  const requestDiagnosis = async (promptOverride) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({ image_base64: imageB64, prompt: promptOverride || DIAGNOSE_PROMPT }),
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Worker ${response.status}: ${errText}`);
+      }
+
+      const data = await response.json();
+      const raw = (data.reply || data.content || "").replace(/```json|```/gi, "").trim();
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) return null;
+      try {
+        const parsed = JSON.parse(match[0]);
+        // Reject replies that parse as JSON but don't match the schema we asked for.
+        return typeof parsed.disease_name === "string" ? parsed : null;
+      } catch {
+        return null;
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
   // ── Diagnose ──────────────────────────────────────────────────────────────
   const diagnose = async () => {
     if (!imageB64) {
@@ -122,41 +170,17 @@ export default function CropDiseaseScreen() {
     setResult(null);
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-      const response = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          image_base64: imageB64,
-          prompt: `You are an expert agricultural plant pathologist.
-Analyse this crop photo and respond ONLY with valid JSON — no markdown, no text outside JSON.
-{
-  "disease_name": "specific disease name or Healthy Crop",
-  "confidence": number 0-100,
-  "cause": "pathogen or cause in one sentence",
-  "symptoms": "visible signs in 2 sentences",
-  "treatment": "recommended treatment in 2 sentences",
-  "remedy_steps": ["Step 1", "Step 2", "Step 3", "Step 4"],
-  "search_query": "agri shop near me for <disease_name> treatment"
-}
-If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A","symptoms":"N/A","treatment":"N/A","remedy_steps":[],"search_query":""}`,
-        }),
-      });
-
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Worker ${response.status}: ${errText}`);
+      let parsed = await requestDiagnosis();
+      if (!parsed) {
+        // Model replied without the expected JSON — retry once with a firmer nudge.
+        parsed = await requestDiagnosis(
+          DIAGNOSE_PROMPT + "\n\nReminder: reply with the JSON object only, nothing else."
+        );
       }
-
-      const data = await response.json();
-      let raw = data.reply || data.content || "";
-      raw = raw.replace(/```json|```/gi, "").trim();
-      const parsed = JSON.parse(raw);
+      if (!parsed) {
+        setError("Couldn't get a clear reading from this photo. Try a closer, well-lit shot of the affected leaf or crop.");
+        return;
+      }
       setResult(parsed);
       fadeIn();
     } catch (err) {
@@ -164,12 +188,7 @@ If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A",
       if (err.name === "AbortError") {
         setError("Request timed out. Check your internet and try again.");
       } else {
-        setError(
-          "Could not analyse the image.\n\n" +
-          "• Check your internet connection\n" +
-          "• Make sure GROQ_API_KEY is set as Secret in Cloudflare Worker\n" +
-          "• Try again — sometimes it takes a moment"
-        );
+        setError("Could not analyse the image. Check your internet connection and try again.");
       }
     } finally {
       setLoading(false);
