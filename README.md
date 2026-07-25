@@ -115,6 +115,15 @@ For a fully standalone build that doesn't depend on your machine or Metro at all
 npx eas-cli build --profile preview --platform android
 ```
 
+**On college/public WiFi:** `expo start` normally needs your phone and laptop on the same
+network with device-to-device visibility, which most college and public networks block
+("client isolation"). Use tunnel mode instead — it routes through the internet, so it works
+regardless of what network either device is on:
+
+```bash
+npm run start:tunnel
+```
+
 ## Project Structure
 
 ```
