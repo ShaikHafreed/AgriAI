@@ -16,6 +16,7 @@ import * as Speech from 'expo-speech';
 import { Accelerometer } from 'expo-sensors';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { apiFetch } from '../../utils/apiClient';
 import { safeGoBack } from '../../utils/navHelpers';
 
 const C = {
@@ -124,8 +125,8 @@ export default function WeatherAlertScreen() {
       if (address) setLocationName(`${address.city || address.district || ''}, ${address.region || ''}`);
 
       const [wRes, fRes] = await Promise.all([
-        fetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`),
-        fetch(`${WORKER_BASE_URL}/forecast?lat=${latitude}&lon=${longitude}&cnt=6`),
+        apiFetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`),
+        apiFetch(`${WORKER_BASE_URL}/forecast?lat=${latitude}&lon=${longitude}&cnt=6`),
       ]);
       const wData = await wRes.json();
       const fData = await fRes.json();

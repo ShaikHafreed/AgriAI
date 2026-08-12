@@ -1,9 +1,10 @@
 import { handleWeather, handleForecast } from './weather.js';
 import { handleMarketPrices } from './market.js';
+import { verifyFirebaseToken } from './verifyAuth.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
 };
 
@@ -11,6 +12,15 @@ export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
+    }
+
+    try {
+      await verifyFirebaseToken(request.headers.get('Authorization'));
+    } catch (e) {
+      return new Response(
+        JSON.stringify({ error: { code: 'unauthorized', message: 'Missing or invalid auth token' } }),
+        { status: 401, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
+      );
     }
 
     const url = new URL(request.url);

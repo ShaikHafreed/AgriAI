@@ -1,0 +1,10 @@
+{
+  "name": "agriai-api-proxy-worker",
+  "private": true,
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

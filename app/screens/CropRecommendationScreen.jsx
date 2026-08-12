@@ -14,6 +14,7 @@ import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { WORKER_BASE_URL, GROQ_RECOMMEND_URL } from '../../utils/apiConfig';
+import { apiFetch } from '../../utils/apiClient';
 import { safeGoBack } from '../../utils/navHelpers';
 
 const RECOMMEND_URL = GROQ_RECOMMEND_URL;
@@ -305,7 +306,7 @@ export default function CropRecommendationScreen() {
         setLocationName(name);
         locationRef.current = name;
       }
-      const res  = await fetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`);
+      const res  = await apiFetch(`${WORKER_BASE_URL}/weather?lat=${latitude}&lon=${longitude}`);
       const data = await res.json();
       if (data.cod === 200) {
         const w = { temp: Math.round(data.main.temp), humidity: data.main.humidity, description: data.weather[0].description };

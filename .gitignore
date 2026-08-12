@@ -21,6 +21,9 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
+# Wrangler (Cloudflare Workers local dev cache)
+.wrangler/
+
 # debug
 npm-debug.*
 yarn-debug.*

@@ -10,6 +10,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { cacheSet, cacheGetStale, checkOnline } from '../../utils/offlineManager';
 import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { apiFetch } from '../../utils/apiClient';
 import { safeGoBack } from '../../utils/navHelpers';
 
 const STATES     = ['All','Andhra Pradesh','Telangana','Karnataka','Maharashtra','Tamil Nadu','Kerala','Rajasthan','Uttar Pradesh','Punjab'];
@@ -74,7 +75,7 @@ export default function MarketPricesScreen() {
       setIsOnlineData(online);
       if (online) {
         const url = `${WORKER_BASE_URL}/market-prices?state=${encodeURIComponent(state)}`;
-        const res     = await fetch(url);
+        const res     = await apiFetch(url);
         const json    = await res.json();
         const records = json.records || [];
         if (records.length > 0) {

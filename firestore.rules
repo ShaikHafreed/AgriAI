@@ -1,0 +1,24 @@
+// firestore.rules
+// Per-user authorization for AgriAI's only Firestore collection: users/{uid}/tasks.
+// This is the Firebase-native equivalent of a backend authorization middleware layer —
+// enforced by Firestore itself on every read/write, not by application code.
+//
+// Deploy with: firebase deploy --only firestore:rules
+// (requires firebase-tools and a firebase.json pointing at this file)
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid}/tasks/{taskId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Deny everything else by default — no other collections exist yet, and any
+    // new one must explicitly opt in to access here rather than being open by omission.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

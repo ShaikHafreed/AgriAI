@@ -16,6 +16,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher';
 import OfflineBanner from '../../components/OfflineBanner';
 import { cacheSet, cacheGetStale, checkOnline } from '../../utils/offlineManager';
 import { WORKER_BASE_URL } from '../../utils/apiConfig';
+import { apiFetch } from '../../utils/apiClient';
 import DrawerMenu from '../../components/DrawerMenu';
 import BottomNavBar, { BOTTOM_NAV_HEIGHT } from '../../components/BottomNavBar';
 
@@ -97,7 +98,7 @@ export default function HomeScreen() {
       setOffline(!online);
 
       if (online) {
-        const res  = await fetch(`${WORKER_BASE_URL}/weather?lat=${lat}&lon=${lon}`);
+        const res  = await apiFetch(`${WORKER_BASE_URL}/weather?lat=${lat}&lon=${lon}`);
         const data = await res.json();
         if (data.cod === 200) {
           const w = {

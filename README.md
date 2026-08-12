@@ -99,6 +99,39 @@ upstream APIs directly.
 - **EAS CLI** / **Wrangler CLI** — building the app and deploying the Cloudflare Worker respectively
 - **Vercel CLI** — landing page deploys and custom domain/DNS management
 
+## Identity & Access Management
+
+AgriAI's IAM is built on **Firebase Authentication** rather than a custom auth server —
+Firebase already provides the pieces a hand-rolled system would otherwise need to
+implement itself:
+
+| Concern | How it's handled |
+|---|---|
+| Password hashing / credential storage | Managed entirely by Firebase Authentication (Google-operated), never touches this codebase |
+| Short-lived access token | Firebase ID token — a signed JWT, ~1 hour expiry |
+| Long-lived refresh token, rotation | Managed by the Firebase client SDK; `getIdToken()` transparently exchanges it for a fresh ID token |
+| Social login | Native Google Sign-In (`utils/googleAuth.js`), linked onto the same uid as the anonymous session so guest data isn't orphaned |
+| Secure mobile token storage | `utils/secureAuthPersistence.js` — Firebase Auth persistence backed by `expo-secure-store` (iOS Keychain / Android Keystore-encrypted storage), with an AsyncStorage fallback only if a secure write fails |
+| API client token attachment + silent refresh | `utils/apiClient.js` — attaches the current ID token to every request to the in-repo Worker; on a 401, force-refreshes the token and retries once |
+| Backend token verification ("auth middleware") | `worker/src/verifyAuth.js` — the Cloudflare Worker verifies the Firebase ID token's RS256 signature against Google's public certs before serving any request; no valid token, no response |
+| Per-resource database authorization | `firestore.rules` — a user can only read/write `users/{their-own-uid}/tasks/**`; everything else is denied by default |
+
+**Deliberately not built:** a parallel Node/Express + PostgreSQL/Prisma auth backend.
+Firestore is the database and Firestore Security Rules are the authorization layer —
+adding a second, custom-JWT identity system alongside Firebase Auth would duplicate what
+it already does, without adding real security. Email/password registration and Apple
+Sign-In aren't implemented yet — only anonymous + Google today, and no iOS build exists
+yet for Apple Sign-In to make sense.
+
+**Deploying the security-hardened Worker:** the auth check in `worker/src/verifyAuth.js`
+is a breaking change for any app build that doesn't yet send a token — deploy it only
+alongside (or after) a new EAS build that includes `utils/apiClient.js`, not before:
+
+```bash
+cd worker && npx wrangler deploy
+firebase deploy --only firestore:rules   # requires: npm i -g firebase-tools && firebase login
+```
+
 ## Getting Started
 
 ### Prerequisites
