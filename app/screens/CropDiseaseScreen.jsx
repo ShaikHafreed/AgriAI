@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GROQ_DIAGNOSE_URL } from "../../utils/apiConfig";
 import { safeGoBack } from "../../utils/navHelpers";
+import { computeSeverityIndex } from "../../utils/severityIndex";
 
 const WORKER_URL = GROQ_DIAGNOSE_URL;
 
@@ -44,6 +45,7 @@ export default function CropDiseaseScreen() {
   const [loading, setLoading]   = useState(false);
   const [result, setResult]     = useState(null);
   const [error, setError]       = useState(null);
+  const [severity, setSeverity] = useState(null);
   const fadeAnim                = useRef(new Animated.Value(0)).current;
 
   const fadeIn = () => {
@@ -92,11 +94,14 @@ export default function CropDiseaseScreen() {
   const handleImage = async (uri) => {
     setResult(null);
     setError(null);
+    setSeverity(null);
     setLoading(true);
     try {
       const { uri: compUri, base64 } = await compressImage(uri);
       setImageUri(compUri);
       setImageB64(base64);
+      // On-device, offline — no network call, runs the instant this image is picked.
+      try { setSeverity(computeSeverityIndex(base64)); } catch (e) { setSeverity(null); }
     } catch (e) {
       Alert.alert("Error", "Could not process the image. Try again.");
     } finally {
@@ -108,6 +113,7 @@ export default function CropDiseaseScreen() {
     setImageUri(null);
     setImageB64(null);
     setResult(null);
+    setSeverity(null);
     setError(null);
   };
 
@@ -206,6 +212,12 @@ If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A",
     return C.greenLight;
   };
 
+  const severityColor = (s) => {
+    if (s === "Severe") return C.red;
+    if (s === "Moderate") return C.amber;
+    return C.greenLight;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor={C.green} />
@@ -243,6 +255,24 @@ If NOT a plant: {"disease_name":"Not a crop image","confidence":0,"cause":"N/A",
             </View>
           )}
         </View>
+
+        {/* Severity Index — on-device, offline, instant */}
+        {severity && (
+          <View style={[styles.severityCard, { borderColor: severityColor(severity.severity) }]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.severityLabel}>SEVERITY INDEX <Text style={styles.severityBadgeOffline}>· on-device</Text></Text>
+              <Text style={styles.severitySub}>Estimated visible leaf area affected</Text>
+            </View>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={[styles.severityPercent, { color: severityColor(severity.severity) }]}>
+                {severity.percentAffected}%
+              </Text>
+              <Text style={[styles.severityTag, { color: severityColor(severity.severity) }]}>
+                {severity.severity}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Camera / Gallery */}
         <View style={styles.actionRow}>
@@ -387,6 +417,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.55)", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20,
   },
   retakeBtnText: { color: "#fff", fontSize: 12, fontWeight: "600" },
+  severityCard: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    backgroundColor: C.card, borderWidth: 1.5, borderRadius: 14, padding: 14, marginBottom: 14,
+  },
+  severityLabel: { fontSize: 11, fontWeight: "700", letterSpacing: 0.6, color: C.text },
+  severityBadgeOffline: { fontSize: 10, fontWeight: "600", color: C.textMuted },
+  severitySub: { fontSize: 12, color: C.textMuted, marginTop: 2 },
+  severityPercent: { fontSize: 22, fontWeight: "800" },
+  severityTag: { fontSize: 12, fontWeight: "700", marginTop: -2 },
   actionRow: { flexDirection: "row", gap: 12, marginBottom: 14 },
   actionBtn: {
     flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
