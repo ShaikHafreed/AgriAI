@@ -47,9 +47,9 @@
     padding: 26px 30px; display: flex; flex-direction: column;
     transform-origin: left center; transform-style: preserve-3d;
     will-change: transform, opacity; overflow-y: auto;
-    transition: transform .62s cubic-bezier(.22,1,.36,1), opacity .4s ease .16s;
+    transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .2s ease .08s;
   }
-  .page.turn-out-next, .page.turn-out-prev { transition: transform .5s cubic-bezier(.55,0,.85,.35), opacity .38s ease-in; }
+  .page.turn-out-next, .page.turn-out-prev { transition: transform .25s cubic-bezier(.55,0,.85,.35), opacity .19s ease-in; }
   .page.turn-out-next { transform: rotateY(-90deg) scale(.97); opacity: 0; }
   .page.turn-out-prev { transform: rotateY(90deg) scale(.97); opacity: 0; }
 
@@ -199,11 +199,12 @@
         <path d="M40 160 Q100 150 160 160" stroke="var(--ink)" stroke-width="2" fill="none"/>
         <path d="M150 45 q22 -18 34 -6" stroke="var(--sky)" stroke-width="2" fill="none" stroke-linecap="round"/>` },
     { title: "Ask AgriAI", cap: "A conversational assistant that reads photos of crops, soil, pests, and leaves.",
-      svg: `<rect x="60" y="55" width="90" height="62" rx="14" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
-        <path d="M84 117 l-10 20 22 -14" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
-        <path d="M80 78 C86 68, 100 66, 106 76 C114 66, 128 70, 126 82 C124 92, 106 100, 106 100 C106 100, 82 92, 80 78 Z" fill="var(--field)" opacity=".4" stroke="var(--field)" stroke-width="1.6"/>
-        <circle cx="74" cy="66" r="3" fill="var(--marigold)"/>
-        <circle cx="140" cy="70" r="3" fill="var(--marigold)"/>` },
+      svg: `<rect x="55" y="50" width="100" height="68" rx="16" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <path d="M80 118 l-8 22 24 -16" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M105 65 C124 70 128 90 112 102 C100 111 85 104 82 88 C79 74 90 60 105 65 Z" fill="var(--field)" opacity=".38" stroke="var(--field)" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M104 66 C99 80 96 92 87 101" fill="none" stroke="var(--field)" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M92 60 l3 4 -4 1 z" fill="var(--marigold)"/>
+        <path d="M134 90 l4 5 -5 1 z" fill="var(--marigold)"/>` },
     { title: "Disease Detection", cap: "Photograph a crop and get an AI diagnosis plus organic treatment suggestions.",
       svg: `<path d="M70 60 C40 70, 40 120, 75 140 C110 155, 140 130, 135 95 C132 72, 100 50, 70 60 Z" fill="none" stroke="var(--field)" stroke-width="2.4"/>
         <path d="M75 62 C90 85, 100 110, 108 138" stroke="var(--field)" stroke-width="1.6" fill="none"/>
@@ -242,15 +243,19 @@
         <line x1="55" y1="86" x2="85" y2="86" stroke="var(--rule)" stroke-width="2"/>
         <line x1="110" y1="72" x2="145" y2="72" stroke="var(--rule)" stroke-width="2"/>
         <line x1="110" y1="86" x2="140" y2="86" stroke="var(--rule)" stroke-width="2"/>
-        <circle cx="128" cy="112" r="16" fill="var(--marigold)" opacity=".85"/>
-        <circle cx="118" cy="120" r="16" fill="var(--marigold)" opacity=".55"/>
-        <text x="128" y="117" text-anchor="middle" font-size="13" fill="var(--ink)" font-family="Georgia, serif">₹</text>` },
+        <ellipse cx="122" cy="128" rx="18" ry="6" fill="none" stroke="var(--marigold)" stroke-width="1.6" opacity=".5"/>
+        <ellipse cx="122" cy="122" rx="18" ry="6" fill="none" stroke="var(--marigold)" stroke-width="1.6" opacity=".7"/>
+        <circle cx="122" cy="114" r="18" fill="var(--paper2)" stroke="var(--marigold)" stroke-width="2.2"/>
+        <text x="122" y="119" text-anchor="middle" font-size="14" fill="var(--marigold)" font-family="Georgia, serif">₹</text>` },
     { title: "Organic Prep", cap: "Recipes like Jeevamrutha and Panchagavya, with curated video walkthroughs.",
-      svg: `<path d="M75 70 h50 l8 68 a8 8 0 0 1 -8 8 h-50 a8 8 0 0 1 -8 -8 Z" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
-        <path d="M85 70 l4 -18 h22 l4 18" fill="none" stroke="var(--ink)" stroke-width="2.2"/>
-        <line x1="80" y1="100" x2="128" y2="100" stroke="var(--rule)" stroke-width="1.6"/>
-        <path d="M100 40 C 95 30, 80 30, 78 42 C 76 52, 90 56, 100 40 Z" fill="var(--field)" opacity=".5"/>
-        <path d="M100 40 C 105 28, 122 30, 122 42 C 122 52, 108 55, 100 40 Z" fill="var(--field)" opacity=".5"/>` },
+      svg: `<path d="M72 75 h56 l7 62 a9 9 0 0 1 -9 9 h-52 a9 9 0 0 1 -9 -9 Z" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <path d="M84 75 l3 -20 h26 l3 20" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M74 108 q26 10 52 0 l4 30 a9 9 0 0 1 -9 9 h-42 a9 9 0 0 1 -9 -9 Z" fill="var(--field)" opacity=".3" stroke="none"/>
+        <line x1="75" y1="108" x2="125" y2="108" stroke="var(--rule)" stroke-width="1.6"/>
+        <path d="M100 34 C 88 24, 68 30, 70 46 C 72 58, 92 58, 100 34 Z" fill="var(--field)" opacity=".55" stroke="var(--field)" stroke-width="1.4"/>
+        <path d="M100 34 C 90 44, 82 50, 74 54" fill="none" stroke="var(--field)" stroke-width="1.2"/>
+        <path d="M100 34 C 112 24, 132 30, 130 46 C 128 58, 108 58, 100 34 Z" fill="var(--field)" opacity=".55" stroke="var(--field)" stroke-width="1.4"/>
+        <path d="M100 34 C 110 44, 118 50, 126 54" fill="none" stroke="var(--field)" stroke-width="1.2"/>` },
     { title: "Govt Schemes", cap: "PM-KISAN, PMFBY, KCC and more — eligibility and how to apply.",
       svg: `<rect x="60" y="50" width="80" height="95" fill="none" stroke="var(--ink)" stroke-width="2.4" rx="3"/>
         <line x1="72" y1="68" x2="128" y2="68" stroke="var(--rule)" stroke-width="2"/>
@@ -327,10 +332,10 @@
       <div class="page-scroll">
         <div class="page-eyebrow">Why AgriAI</div>
         <h2 class="page-heading display">Built for real field conditions.</h2>
-        <div class="phil-item"><h3>Practical, not theoretical</h3><p>Every screen answers a decision a farmer actually has to make this week — what to plant, what's wrong with a crop, what it's selling for nearby.</p></div>
-        <div class="phil-item"><h3>Offline-first</h3><p>Tasks, ledger entries, and market prices are cached on-device and sync when signal returns — the field doesn't always have a connection.</p></div>
-        <div class="phil-item"><h3>In your language</h3><p>English, Telugu, Hindi, Tamil, Kannada, and Malayalam, throughout — not just the home screen.</p></div>
-        <div class="phil-item"><h3>Open</h3><p>The full source is public on GitHub, including the backend that keeps API keys off the device.</p></div>
+        <div class="phil-item"><h3>Practical, not theoretical</h3><p>Every screen answers a decision a farmer must make this week: what to plant, what's wrong, what it sells for nearby.</p></div>
+        <div class="phil-item"><h3>Offline-first</h3><p>Tasks, ledger entries, and prices are cached on-device and sync when signal returns.</p></div>
+        <div class="phil-item"><h3>In your language</h3><p>English, Telugu, Hindi, Tamil, Kannada, Malayalam — throughout, not just the home screen.</p></div>
+        <div class="phil-item"><h3>Open</h3><p>Full source on GitHub — including the backend that keeps API keys off the device.</p></div>
       </div>`;
   }
 
@@ -506,7 +511,7 @@
       if (outgoing) outgoing.remove();
       wireInteractions(incoming, target);
       incoming.focus({ preventScroll: true });
-    }, REDUCE ? 170 : 640);
+    }, REDUCE ? 170 : 320);
 
     current = target;
     prevBtn.disabled = current === 0;
