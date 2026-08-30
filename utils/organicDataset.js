@@ -172,18 +172,39 @@ export const ORGANIC_DATASET = {
   },
 };
 
-// Get organic data for a crop by name (handles Telugu/Hindi names too)
+// Common Indian-English synonyms for the same crop — the AI recommendation
+// text doesn't always use the exact word this dataset is keyed by (e.g. it
+// may say "Paddy" for what this file calls "Rice").
+const CROP_ALIASES = {
+  paddy: 'Rice',
+  corn: 'Maize',
+  kapas: 'Cotton',
+  peanut: 'Groundnut',
+  peanuts: 'Groundnut',
+  groundnuts: 'Groundnut',
+  soya: 'Soybean',
+  soyabean: 'Soybean',
+  soyabeans: 'Soybean',
+};
+
+// Get organic data for a crop by name (handles Telugu/Hindi names and
+// common English synonyms too)
 export const getOrganicData = (cropName) => {
   // Direct match
   if (ORGANIC_DATASET[cropName]) return ORGANIC_DATASET[cropName];
+  const lower = cropName.toLowerCase();
+  // Known synonym (e.g. "Paddy" -> "Rice")
+  if (CROP_ALIASES[lower] && ORGANIC_DATASET[CROP_ALIASES[lower]]) {
+    return ORGANIC_DATASET[CROP_ALIASES[lower]];
+  }
   // Search by Telugu/Hindi name
   for (const [key, val] of Object.entries(ORGANIC_DATASET)) {
     if (val.TE === cropName || val.HI === cropName) return val;
   }
-  // Partial match
-  const lower = cropName.toLowerCase();
+  // Partial match, either direction (dataset key inside the given name, or vice versa)
   for (const [key, val] of Object.entries(ORGANIC_DATASET)) {
-    if (key.toLowerCase().includes(lower)) return val;
+    const keyLower = key.toLowerCase();
+    if (keyLower.includes(lower) || lower.includes(keyLower)) return val;
   }
   return null;
 };
