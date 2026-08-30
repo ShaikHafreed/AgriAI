@@ -1,0 +1,4 @@
+{
+  "buildCommand": "echo 'Static landing page, no build needed'",
+  "outputDirectory": "landing"
+}
