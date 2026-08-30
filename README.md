@@ -12,7 +12,7 @@ Built with **Expo / React Native**, **Firebase**, **Cloudflare Workers**, and **
 
 Install the latest Android build directly — no Play Store needed:
 
-**[Download AgriAI (Android)](https://expo.dev/accounts/hafreex/projects/agriai/builds/793d3efa-3e38-4674-8097-4b2c21d39317)**
+**[Download AgriAI (Android)](https://expo.dev/accounts/hafreex/projects/agriai/builds/95c870b1-9c68-4d41-94e8-8ef9d8e16aee)**
 
 Open the link on an Android phone and tap install (Android will ask you to allow
 "install from unknown sources" — expected, since this isn't distributed via the Play Store yet).
