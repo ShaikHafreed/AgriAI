@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AgriAI Field Sketchbook — Draft</title>
+<meta name="description" content="Candidate redesign of the AgriAI landing page: an interactive field sketchbook with illustrated plates, page-turns, and a magnifying lens. NOT yet live." />
+<style>
+  :root {
+    --paper: #F2F5EA; --paper2: #e6ead6; --ink: #241b14; --field: #2F5233;
+    --marigold: #D99A2B; --sky: #4A6670; --rule: #c9d3bd; --shadow: rgba(36,27,20,0.22);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", "Noto Sans", system-ui, sans-serif;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    overflow-x: hidden;
+  }
+  .display { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; }
+  .mono { font-family: "IBM Plex Mono", "Courier New", monospace; }
+  a { color: var(--sky); }
+  button { font-family: inherit; }
+  :focus-visible { outline: 2.5px solid var(--sky); outline-offset: 2px; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px; border-bottom: 2px solid var(--ink);
+  }
+  .brand { font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+  .topbar .links { display: flex; gap: 10px; }
+  .pill {
+    font-size: 12.5px; font-weight: 600; padding: 7px 14px; border: 1.5px solid var(--ink);
+    border-radius: 999px; text-decoration: none; color: var(--ink); transition: transform .15s;
+    display: inline-block; background: none; cursor: pointer;
+  }
+  .pill:hover { transform: translateY(-1px); }
+  .pill.fill { background: var(--marigold); border-color: var(--marigold); }
+
+  .book-wrap { display: flex; flex-direction: column; align-items: center; padding: 34px 16px 30px; }
+  .book-stage { position: relative; width: min(720px, 94vw); height: min(600px, 78vh); perspective: 2800px; }
+  .page {
+    position: absolute; inset: 0; background: var(--paper);
+    border: 2px solid var(--ink); border-radius: 4px;
+    box-shadow: 8px 10px 0 var(--shadow);
+    padding: 26px 30px; display: flex; flex-direction: column;
+    transform-origin: left center; transform-style: preserve-3d;
+    will-change: transform, opacity; overflow-y: auto;
+    transition: transform .62s cubic-bezier(.22,1,.36,1), opacity .4s ease .16s;
+  }
+  .page.turn-out-next, .page.turn-out-prev { transition: transform .5s cubic-bezier(.55,0,.85,.35), opacity .38s ease-in; }
+  .page.turn-out-next { transform: rotateY(-90deg) scale(.97); opacity: 0; }
+  .page.turn-out-prev { transform: rotateY(90deg) scale(.97); opacity: 0; }
+
+  html.reduce-motion .page { transition: opacity .16s ease !important; transform: none !important; }
+  html.reduce-motion .page.turn-out-next, html.reduce-motion .page.turn-out-prev { transform: none !important; }
+  html.reduce-motion .lens { transition: opacity .1s ease !important; transform: none !important; }
+
+  .page-eyebrow { font-size: 11.5px; letter-spacing: .12em; color: var(--marigold); font-weight: 700; text-transform: uppercase; margin: 0 0 6px; }
+  .page-heading { font-size: 26px; margin: 0 0 10px; text-wrap: balance; }
+  .page-scroll { flex: 1; min-height: 0; }
+
+  .cover h1 { font-size: 32px; margin: 4px 0 2px; text-wrap: balance; }
+  .cover .sub { font-size: 13px; color: var(--sky); margin-bottom: 4px; }
+  .cover .lede { font-size: 14.5px; max-width: 52ch; opacity: .82; margin: 10px 0 8px; }
+  .langs { font-size: 12.5px; color: var(--sky); margin: 8px 0 18px; }
+  .langs .div { color: var(--rule); margin: 0 6px; }
+  .cover-ctas { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .begin-link {
+    margin-top: auto; align-self: flex-start; background: none; border: none; color: var(--field);
+    font-weight: 700; font-size: 14px; cursor: pointer; padding: 6px 0; display: inline-flex; gap: 6px; align-items: center;
+  }
+
+  .phil-item { margin-bottom: 16px; }
+  .phil-item h3 { font-size: 15.5px; margin: 0 0 4px; font-family: Georgia, serif; }
+  .phil-item p { font-size: 13.5px; opacity: .8; margin: 0; line-height: 1.55; }
+
+  .index-list { list-style: none; margin: 0; padding: 0; }
+  .index-row {
+    display: flex; align-items: baseline; gap: 12px; padding: 9px 6px; width: 100%;
+    border: none; border-bottom: 1px dotted var(--rule); background: none; text-align: left;
+    cursor: pointer; transition: background .2s ease, padding-left .2s ease; color: var(--ink);
+  }
+  .index-row:hover, .index-row:focus-visible { padding-left: 10px; background: var(--paper2); }
+  .index-num { font-size: 12px; color: var(--marigold); font-weight: 700; width: 34px; flex-shrink: 0; }
+  .index-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .index-cap { font-size: 12px; opacity: .6; }
+
+  .plate-body { flex: 1; display: flex; gap: 20px; align-items: center; min-height: 0; }
+  .plate-art-box {
+    position: relative; width: 300px; height: 300px; flex-shrink: 0;
+    border: 1.5px solid var(--rule); border-radius: 6px; background: var(--paper2);
+    overflow: hidden; cursor: crosshair;
+  }
+  .plate-art-box.coarse { cursor: pointer; touch-action: manipulation; }
+  .plate-art-box svg { width: 100%; height: 100%; display: block; transition: transform .35s cubic-bezier(.34,1.2,.64,1); }
+  .inspect-hint {
+    position: absolute; left: 8px; bottom: 8px; font-size: 10.5px; padding: 3px 8px;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; opacity: .75; pointer-events: none;
+  }
+  .plate-caption { font-size: 13.5px; line-height: 1.6; opacity: .82; }
+  .plate-caption .cap-label { display:block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--field); margin-bottom: 6px; font-weight: 700;}
+
+  .lens {
+    position: absolute; width: 128px; height: 128px; border-radius: 50%;
+    border: 3px solid var(--ink); box-shadow: 0 6px 14px var(--shadow), inset 0 0 0 3px var(--paper);
+    overflow: hidden; pointer-events: none; background: var(--paper2);
+    opacity: 0; transform: scale(.7); visibility: hidden;
+    transition: opacity .22s ease, transform .22s cubic-bezier(.34,1.4,.64,1), visibility 0s linear .22s;
+  }
+  .lens.show { opacity: 1; transform: scale(1); visibility: visible; transition: opacity .18s ease, transform .18s cubic-bezier(.34,1.4,.64,1); }
+  .lens-inner { position: absolute; }
+  .lens-inner svg { display: block; }
+  .lens-shine { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.5), transparent 55%); }
+
+  .zoom-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .zoom-btn {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--ink);
+    background: var(--paper); font-size: 16px; font-weight: 700; cursor: pointer; line-height: 1;
+  }
+  .zoom-pct { font-size: 12px; width: 42px; text-align: center; font-variant-numeric: tabular-nums; }
+
+  .seasons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .season-card { border: 1.5px solid var(--rule); border-radius: 8px; padding: 14px; position: relative; }
+  .season-card.current { border-color: var(--marigold); background: var(--paper2); }
+  .season-months { font-size: 11px; opacity: .6; margin-bottom: 4px; }
+  .season-title { font-size: 17px; margin: 0 0 6px; font-family: Georgia, serif; }
+  .season-text { font-size: 12.5px; opacity: .78; margin: 0; }
+  .now-badge { position: absolute; top: 10px; right: 10px; font-size: 9.5px; font-weight: 700; background: var(--marigold); color: var(--ink); padding: 2px 7px; border-radius: 999px; text-transform: uppercase; }
+  @media (max-width: 640px) { .seasons { grid-template-columns: 1fr; } }
+
+  .install-page { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; height: 100%; gap: 12px; }
+  .install-page .big-cta { padding: 14px 26px; font-size: 15.5px; }
+  .install-note { font-size: 12px; opacity: .65; max-width: 44ch; }
+
+  .colophon-list { font-size: 13px; line-height: 2; opacity: .82; }
+
+  .book-nav { display: flex; align-items: center; gap: 18px; margin-top: 14px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 999px;
+    border: 1.5px solid var(--ink); background: var(--paper); font-weight: 600; font-size: 13.5px; cursor: pointer;
+  }
+  .nav-btn:disabled { opacity: .35; cursor: default; }
+  .nav-dots { display: flex; gap: 6px; flex-wrap: wrap; max-width: 220px; justify-content: center; }
+  .nav-dot { width: 7px; height: 7px; padding: 0; border-radius: 50%; border: none; background: var(--rule); cursor: pointer; transition: background .25s ease, transform .25s ease; }
+  .nav-dot.active { transform: scale(1.4); background: var(--marigold); }
+  .page-pos { font-size: 11px; opacity: .55; margin-top: 6px; }
+
+  footer.site-footer { text-align: center; font-size: 11.5px; opacity: .6; padding: 6px 0 30px; }
+  footer.site-footer a { color: var(--sky); }
+
+  @media (max-width: 640px) {
+    .plate-body { flex-direction: column; }
+    .plate-art-box { width: 100%; height: 230px; }
+    .seasons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand display">AgriAI · Field Sketchbook</div>
+  <nav class="links" aria-label="Primary">
+    <a class="pill" href="https://github.com/ShaikHafreed/AgriAI">GitHub</a>
+    <a class="pill fill" href="https://expo.dev/accounts/hafreex/projects/agriai/builds/83d57cac-cfce-4977-88c9-a6b49ebb1138">Install on Android</a>
+  </nav>
+</header>
+
+<main class="book-wrap">
+  <div class="book-stage" id="stage" role="group" aria-roledescription="notebook" aria-label="AgriAI field sketchbook"></div>
+  <div class="book-nav">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous page">← Prev</button>
+    <div class="nav-dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" aria-label="Next page">Next →</button>
+  </div>
+  <div class="page-pos mono" id="pagePos" aria-live="polite"></div>
+</main>
+
+<footer class="site-footer">
+  Expo · React Native · Firebase · Cloudflare Workers ·
+  <a href="https://github.com/ShaikHafreed/AgriAI">github.com/ShaikHafreed/AgriAI</a>
+</footer>
+
+<script>
+(function () {
+  const INSTALL_URL = "https://expo.dev/accounts/hafreex/projects/agriai/builds/83d57cac-cfce-4977-88c9-a6b49ebb1138";
+  const GITHUB_URL = "https://github.com/ShaikHafreed/AgriAI";
+
+  const PLATES = [
+    { title: "Crop Recommendation", cap: "AI-suggested crops based on location, season, and live weather.",
+      svg: `<circle cx="100" cy="150" r="6" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <path d="M100 150 C 96 110, 96 80, 100 40" stroke="var(--field)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M100 90 C 80 80, 65 85, 55 70" stroke="var(--field)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <path d="M100 70 C 120 60, 135 65, 145 50" stroke="var(--field)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="52" cy="66" rx="16" ry="9" fill="var(--field)" opacity=".35" transform="rotate(-30 52 66)"/>
+        <ellipse cx="148" cy="47" rx="16" ry="9" fill="var(--field)" opacity=".35" transform="rotate(25 148 47)"/>
+        <circle cx="100" cy="34" r="10" fill="none" stroke="var(--marigold)" stroke-width="2.4"/>
+        <path d="M40 160 Q100 150 160 160" stroke="var(--ink)" stroke-width="2" fill="none"/>
+        <path d="M150 45 q22 -18 34 -6" stroke="var(--sky)" stroke-width="2" fill="none" stroke-linecap="round"/>` },
+    { title: "Ask AgriAI", cap: "A conversational assistant that reads photos of crops, soil, pests, and leaves.",
+      svg: `<rect x="60" y="55" width="90" height="62" rx="14" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <path d="M84 117 l-10 20 22 -14" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M80 78 C86 68, 100 66, 106 76 C114 66, 128 70, 126 82 C124 92, 106 100, 106 100 C106 100, 82 92, 80 78 Z" fill="var(--field)" opacity=".4" stroke="var(--field)" stroke-width="1.6"/>
+        <circle cx="74" cy="66" r="3" fill="var(--marigold)"/>
+        <circle cx="140" cy="70" r="3" fill="var(--marigold)"/>` },
+    { title: "Disease Detection", cap: "Photograph a crop and get an AI diagnosis plus organic treatment suggestions.",
+      svg: `<path d="M70 60 C40 70, 40 120, 75 140 C110 155, 140 130, 135 95 C132 72, 100 50, 70 60 Z" fill="none" stroke="var(--field)" stroke-width="2.4"/>
+        <path d="M75 62 C90 85, 100 110, 108 138" stroke="var(--field)" stroke-width="1.6" fill="none"/>
+        <circle cx="92" cy="90" r="4" fill="var(--marigold)" opacity=".8"/>
+        <circle cx="108" cy="108" r="3" fill="var(--marigold)" opacity=".8"/>
+        <circle cx="85" cy="115" r="3.4" fill="var(--marigold)" opacity=".8"/>
+        <circle cx="150" cy="70" r="26" fill="none" stroke="var(--ink)" stroke-width="3"/>
+        <line x1="169" y1="89" x2="188" y2="108" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>` },
+    { title: "Market Prices", cap: "Live mandi prices by state, cached so they're there even without signal.",
+      svg: `<line x1="100" y1="40" x2="100" y2="150" stroke="var(--ink)" stroke-width="2.4"/>
+        <line x1="55" y1="60" x2="145" y2="60" stroke="var(--ink)" stroke-width="2.4"/>
+        <path d="M55 60 L40 92 L70 92 Z" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <path d="M145 60 L130 92 L160 92 Z" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <line x1="70" y1="150" x2="130" y2="150" stroke="var(--ink)" stroke-width="2.4"/>
+        <text x="100" y="45" text-anchor="middle" font-size="16" fill="var(--marigold)" font-family="Georgia, serif">₹</text>` },
+    { title: "Weather Alerts", cap: "Local weather and farming-relevant alerts, with voice read-out for the field.",
+      svg: `<circle cx="70" cy="60" r="20" fill="none" stroke="var(--marigold)" stroke-width="2.4"/>
+        <path d="M70 32 v-10 M92 60 h10 M48 60 h-10 M85 45 l7 -7 M55 45 l-7 -7" stroke="var(--marigold)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M60 105 a26 26 0 0 1 0 -52 a32 32 0 0 1 62 8 a22 22 0 0 1 -6 44 Z" fill="none" stroke="var(--sky)" stroke-width="2.4"/>
+        <line x1="75" y1="115" x2="68" y2="132" stroke="var(--sky)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="95" y1="115" x2="88" y2="132" stroke="var(--sky)" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="115" y1="115" x2="108" y2="132" stroke="var(--sky)" stroke-width="2.2" stroke-linecap="round"/>` },
+    { title: "Task Manager", cap: "Seasonal crop-calendar tasks with scheduled reminders, so nothing gets missed.",
+      svg: `<rect x="50" y="45" width="100" height="95" rx="6" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <line x1="50" y1="68" x2="150" y2="68" stroke="var(--ink)" stroke-width="2"/>
+        <line x1="70" y1="38" x2="70" y2="52" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="130" y1="38" x2="130" y2="52" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M65 92 l10 10 18 -20" fill="none" stroke="var(--field)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="100" y1="97" x2="134" y2="97" stroke="var(--rule)" stroke-width="3"/>
+        <path d="M65 118 l10 10 18 -20" fill="none" stroke="var(--rule)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="100" y1="123" x2="134" y2="123" stroke="var(--rule)" stroke-width="3"/>` },
+    { title: "Farm Ledger", cap: "Offline expense and income tracking with per-crop profit at a glance.",
+      svg: `<path d="M45 55 h110 v80 a6 6 0 0 1 -6 6 h-98 a6 6 0 0 1 -6 -6 Z" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <line x1="100" y1="55" x2="100" y2="141" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="2 4"/>
+        <line x1="55" y1="72" x2="90" y2="72" stroke="var(--rule)" stroke-width="2"/>
+        <line x1="55" y1="86" x2="85" y2="86" stroke="var(--rule)" stroke-width="2"/>
+        <line x1="110" y1="72" x2="145" y2="72" stroke="var(--rule)" stroke-width="2"/>
+        <line x1="110" y1="86" x2="140" y2="86" stroke="var(--rule)" stroke-width="2"/>
+        <circle cx="128" cy="112" r="16" fill="var(--marigold)" opacity=".85"/>
+        <circle cx="118" cy="120" r="16" fill="var(--marigold)" opacity=".55"/>
+        <text x="128" y="117" text-anchor="middle" font-size="13" fill="var(--ink)" font-family="Georgia, serif">₹</text>` },
+    { title: "Organic Prep", cap: "Recipes like Jeevamrutha and Panchagavya, with curated video walkthroughs.",
+      svg: `<path d="M75 70 h50 l8 68 a8 8 0 0 1 -8 8 h-50 a8 8 0 0 1 -8 -8 Z" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+        <path d="M85 70 l4 -18 h22 l4 18" fill="none" stroke="var(--ink)" stroke-width="2.2"/>
+        <line x1="80" y1="100" x2="128" y2="100" stroke="var(--rule)" stroke-width="1.6"/>
+        <path d="M100 40 C 95 30, 80 30, 78 42 C 76 52, 90 56, 100 40 Z" fill="var(--field)" opacity=".5"/>
+        <path d="M100 40 C 105 28, 122 30, 122 42 C 122 52, 108 55, 100 40 Z" fill="var(--field)" opacity=".5"/>` },
+    { title: "Govt Schemes", cap: "PM-KISAN, PMFBY, KCC and more — eligibility and how to apply.",
+      svg: `<rect x="60" y="50" width="80" height="95" fill="none" stroke="var(--ink)" stroke-width="2.4" rx="3"/>
+        <line x1="72" y1="68" x2="128" y2="68" stroke="var(--rule)" stroke-width="2"/>
+        <line x1="72" y1="80" x2="128" y2="80" stroke="var(--rule)" stroke-width="2"/>
+        <line x1="72" y1="92" x2="110" y2="92" stroke="var(--rule)" stroke-width="2"/>
+        <circle cx="132" cy="120" r="18" fill="none" stroke="var(--marigold)" stroke-width="2.4"/>
+        <path d="M124 120 l6 6 12 -12" fill="none" stroke="var(--marigold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>` },
+  ];
+
+  const SEASONS = [
+    { key: "kharif", months: "JUN – SEP", title: "Kharif", text: "Monsoon-sown staples — rice, cotton, maize, soybean." },
+    { key: "rabi", months: "OCT – JAN", title: "Rabi", text: "Winter crops — wheat, mustard, gram, barley." },
+    { key: "summer", months: "FEB – MAY", title: "Summer", text: "Short-cycle crops — watermelon, cucumber, moong." },
+  ];
+
+  const PAGES = [
+    { type: "cover" },
+    { type: "philosophy" },
+    { type: "index" },
+    ...PLATES.map((_, i) => ({ type: "plate", plateIndex: i })),
+    { type: "season" },
+    { type: "install" },
+    { type: "colophon" },
+  ];
+
+  const ZOOM_MIN = 0.75, ZOOM_MAX = 1.6, LENS_ZOOM = 2.3, INSPECT_ZOOM = 1.4;
+  const COARSE = matchMedia("(pointer: coarse)").matches;
+  const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (REDUCE) document.documentElement.classList.add("reduce-motion");
+
+  let current = 0;
+  const stage = document.getElementById("stage");
+  const dotsEl = document.getElementById("dots");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const pagePos = document.getElementById("pagePos");
+
+  const toRoman = (n) => {
+    const map = [[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+    let r = "", v = n;
+    for (const [val, sym] of map) while (v >= val) { r += sym; v -= val; }
+    return r;
+  };
+
+  function renderDots() {
+    dotsEl.innerHTML = "";
+    PAGES.forEach((_, i) => {
+      const b = document.createElement("button");
+      b.className = "nav-dot" + (i === current ? " active" : "");
+      b.setAttribute("aria-label", `Go to page ${i + 1} of ${PAGES.length}`);
+      b.onclick = () => goTo(i);
+      dotsEl.appendChild(b);
+    });
+    pagePos.textContent = `Page ${current + 1} of ${PAGES.length}`;
+  }
+
+  function coverHTML() {
+    return `
+      <div class="cover page-scroll" style="display:flex; flex-direction:column; height:100%;">
+        <div class="sub mono">FIELD SKETCHBOOK</div>
+        <h1 class="display">AgriAI — intelligence for every field.</h1>
+        <p class="lede">Better decisions, from seed to sale. Crop guidance, disease diagnosis, market prices, weather alerts, and farm records — built for Indian farmers, in six languages, working even offline.</p>
+        <div class="langs mono">అగ్రిఏఐ <span class="div">·</span> एग्रीAI <span class="div">·</span> AgriAI <span class="div">·</span> also in Tamil, Kannada &amp; Malayalam</div>
+        <div class="cover-ctas">
+          <a class="pill fill" href="${INSTALL_URL}">Install on Android</a>
+          <a class="pill" href="${GITHUB_URL}">View source on GitHub</a>
+        </div>
+        <button class="begin-link" data-goto="1">Begin reading →</button>
+      </div>`;
+  }
+
+  function philosophyHTML() {
+    return `
+      <div class="page-scroll">
+        <div class="page-eyebrow">Why AgriAI</div>
+        <h2 class="page-heading display">Built for real field conditions.</h2>
+        <div class="phil-item"><h3>Practical, not theoretical</h3><p>Every screen answers a decision a farmer actually has to make this week — what to plant, what's wrong with a crop, what it's selling for nearby.</p></div>
+        <div class="phil-item"><h3>Offline-first</h3><p>Tasks, ledger entries, and market prices are cached on-device and sync when signal returns — the field doesn't always have a connection.</p></div>
+        <div class="phil-item"><h3>In your language</h3><p>English, Telugu, Hindi, Tamil, Kannada, and Malayalam, throughout — not just the home screen.</p></div>
+        <div class="phil-item"><h3>Open</h3><p>The full source is public on GitHub, including the backend that keeps API keys off the device.</p></div>
+      </div>`;
+  }
+
+  function indexHTML() {
+    const items = PLATES.map((p, i) => `
+      <li>
+        <button class="index-row" data-goto="${i + 3}">
+          <span class="index-num mono">${toRoman(i + 1)}</span>
+          <span class="index-title display">${p.title}</span>
+          <span class="index-cap">${p.cap.split(".")[0]}.</span>
+        </button>
+      </li>`).join("");
+    return `
+      <div class="page-scroll">
+        <div class="page-eyebrow">The Field Log</div>
+        <h2 class="page-heading display">Nine plates, one notebook.</h2>
+        <ul class="index-list">${items}</ul>
+      </div>`;
+  }
+
+  function plateHTML(plateIndex) {
+    const p = PLATES[plateIndex];
+    const hint = COARSE ? `<span class="inspect-hint">Tap to inspect</span>` : "";
+    return `
+      <div class="page-eyebrow">Plate ${toRoman(plateIndex + 1)} / IX</div>
+      <h2 class="page-heading display">${p.title}</h2>
+      <div class="plate-body">
+        <div class="plate-art-box${COARSE ? " coarse" : ""}" id="artbox">
+          <svg viewBox="0 0 200 200" role="img" aria-label="${p.title} illustration">${p.svg}</svg>
+          ${hint}
+          <div class="lens" id="lens" aria-hidden="true">
+            <div class="lens-inner" id="lensInner"><svg viewBox="0 0 200 200">${p.svg}</svg></div>
+            <div class="lens-shine"></div>
+          </div>
+        </div>
+        <div class="plate-caption">
+          <span class="cap-label">Field note</span>
+          ${p.cap}
+          <div class="zoom-row">
+            <button class="zoom-btn" id="zOut" aria-label="Zoom out">−</button>
+            <span class="zoom-pct mono" id="zPct">100%</span>
+            <button class="zoom-btn" id="zIn" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function seasonHTML() {
+    const month = new Date().getMonth() + 1;
+    const currentSeason = (month >= 6 && month <= 9) ? "kharif" : (month >= 10 || month === 1) ? "rabi" : "summer";
+    const cards = SEASONS.map(s => `
+      <div class="season-card${s.key === currentSeason ? " current" : ""}">
+        ${s.key === currentSeason ? '<span class="now-badge">Now</span>' : ""}
+        <div class="season-months mono">${s.months}</div>
+        <h3 class="season-title">${s.title}</h3>
+        <p class="season-text">${s.text}</p>
+      </div>`).join("");
+    return `
+      <div class="page-scroll">
+        <div class="page-eyebrow">The Season Cycle</div>
+        <h2 class="page-heading display">Recommendations shift with the season.</h2>
+        <p style="font-size:13px; opacity:.75; margin:0 0 16px;">Crop Recommendation reads India's three growing seasons automatically — no manual setup.</p>
+        <div class="seasons">${cards}</div>
+      </div>`;
+  }
+
+  function installHTML() {
+    return `
+      <div class="install-page">
+        <div class="page-eyebrow">Ready for the field</div>
+        <h2 class="page-heading display">Install AgriAI on Android.</h2>
+        <a class="pill fill big-cta" href="${INSTALL_URL}">Install on Android</a>
+        <p class="install-note">Direct install · Built for the field — no Play Store needed. Android will ask to allow "install from unknown sources," which is expected for an app not yet listed there.</p>
+        <a class="pill" href="${GITHUB_URL}">View source on GitHub</a>
+      </div>`;
+  }
+
+  function colophonHTML() {
+    return `
+      <div class="page-scroll">
+        <div class="page-eyebrow">Colophon</div>
+        <h2 class="page-heading display">Drawn and built for Indian farmers.</h2>
+        <div class="colophon-list">
+          Expo · React Native · Firebase · Cloudflare Workers<br/>
+          Source: <a href="${GITHUB_URL}">${GITHUB_URL}</a><br/>
+          Android direct install today — Play Store and iOS are next.
+        </div>
+      </div>`;
+  }
+
+  const RENDERERS = {
+    cover: coverHTML, philosophy: philosophyHTML, index: indexHTML,
+    season: seasonHTML, install: installHTML, colophon: colophonHTML,
+  };
+
+  function buildPage(i) {
+    const meta = PAGES[i];
+    const page = document.createElement("div");
+    page.className = "page";
+    page.setAttribute("tabindex", "-1");
+    page.innerHTML = meta.type === "plate" ? plateHTML(meta.plateIndex) : RENDERERS[meta.type]();
+    return page;
+  }
+
+  function wireInteractions(page, i) {
+    page.querySelectorAll("[data-goto]").forEach(el => {
+      el.onclick = () => goTo(Number(el.dataset.goto));
+    });
+
+    const meta = PAGES[i];
+    if (meta.type !== "plate") return;
+
+    let plateZoom = 1;
+    const artbox = page.querySelector("#artbox");
+    const svg = artbox.querySelector("svg");
+    const zPct = page.querySelector("#zPct");
+
+    function setZoom(z) {
+      plateZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
+      svg.style.transform = `scale(${plateZoom})`;
+      zPct.textContent = Math.round(plateZoom * 100) + "%";
+    }
+    page.querySelector("#zIn").onclick = () => setZoom(plateZoom + 0.15);
+    page.querySelector("#zOut").onclick = () => setZoom(plateZoom - 0.15);
+
+    if (COARSE) {
+      let inspecting = false;
+      artbox.addEventListener("click", () => {
+        inspecting = !inspecting;
+        setZoom(inspecting ? INSPECT_ZOOM : 1);
+      });
+      return;
+    }
+
+    const lens = page.querySelector("#lens");
+    const lensInner = page.querySelector("#lensInner");
+    function moveLens(clientX, clientY) {
+      const r = artbox.getBoundingClientRect();
+      let x = Math.max(0, Math.min(r.width, clientX - r.left));
+      let y = Math.max(0, Math.min(r.height, clientY - r.top));
+      lens.classList.add("show");
+      lens.style.left = (x - 64) + "px";
+      lens.style.top = (y - 64) + "px";
+      lensInner.style.width = (r.width * LENS_ZOOM) + "px";
+      lensInner.style.height = (r.height * LENS_ZOOM) + "px";
+      lensInner.style.left = -(x * LENS_ZOOM - 64) + "px";
+      lensInner.style.top = -(y * LENS_ZOOM - 64) + "px";
+    }
+    const hideLens = () => lens.classList.remove("show");
+    artbox.addEventListener("pointermove", e => moveLens(e.clientX, e.clientY));
+    artbox.addEventListener("pointerleave", hideLens);
+    artbox.addEventListener("pointerdown", e => moveLens(e.clientX, e.clientY));
+  }
+
+  function goTo(target) {
+    if (target === current || target < 0 || target >= PAGES.length) return;
+    const dir = target > current ? "next" : "prev";
+    const outgoing = stage.querySelector(".page");
+    const incoming = buildPage(target);
+    incoming.style.transform = (dir === "next" ? "rotateY(90deg)" : "rotateY(-90deg)") + " scale(.97)";
+    incoming.style.opacity = "0";
+    incoming.style.zIndex = "2";
+    stage.appendChild(incoming);
+    incoming.getBoundingClientRect();
+
+    requestAnimationFrame(() => {
+      if (outgoing) outgoing.classList.add(dir === "next" ? "turn-out-next" : "turn-out-prev");
+      incoming.style.transform = "rotateY(0deg) scale(1)";
+      incoming.style.opacity = "1";
+    });
+
+    setTimeout(() => {
+      if (outgoing) outgoing.remove();
+      wireInteractions(incoming, target);
+      incoming.focus({ preventScroll: true });
+    }, REDUCE ? 170 : 640);
+
+    current = target;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === PAGES.length - 1;
+    renderDots();
+  }
+
+  const first = buildPage(0);
+  stage.appendChild(first);
+  wireInteractions(first, 0);
+  prevBtn.disabled = true;
+  renderDots();
+
+  prevBtn.onclick = () => goTo(current - 1);
+  nextBtn.onclick = () => goTo(current + 1);
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") goTo(current + 1);
+    if (e.key === "ArrowLeft") goTo(current - 1);
+  });
+
+  let touchStartX = null;
+  stage.addEventListener("touchstart", e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  stage.addEventListener("touchend", e => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 55) goTo(current + (dx < 0 ? 1 : -1));
+    touchStartX = null;
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>
